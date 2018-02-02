@@ -12,7 +12,6 @@ import chalk from 'chalk'
 const app = express();
 
 const server = http.createServer(app)
-console.log(chalk.green(`env: ${env}, port: ${port}, ip: ${ip}`))
 // app.listen(3000, ()=>{
 // 	console.log(chalk.blueBright.bgBlack('Express server listening on: ' +
 // 		chalk.white.underline.bold('http://localhost:3000')))
@@ -23,7 +22,7 @@ console.log(chalk.green(`env: ${env}, port: ${port}, ip: ${ip}`))
 setImmediate(() => {
 	server.listen(port, ip, () => {
 		console.log(chalk.blueBright.bgBlack('Express server listening on: ' + 
-			chalk.white.underline.bold(`http://${ip}:${port}`) + `, in ${env} mode`))
+			chalk.green.underline.bold(`http://${ip}:${port}`) + `, in ${env} mode`))
 	})
 })
 
