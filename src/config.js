@@ -24,13 +24,13 @@ const config = {
 		root: path.join(__dirname, '..'),
 		port: process.env.PORT || 3000,
 		ip: process.env.IP || '127.0.0.1',
-		// mongo: {
-		// 	options: {
-		// 		db: {
-		// 			safe: true
-		// 		}
-		// 	}
-		// }
+		mongo: {
+			options: {
+				db: {
+					safe: true
+				}
+			}
+		}
 	},
 	// test: {
 	// 	mongo: {
@@ -40,14 +40,14 @@ const config = {
 	// 		}
 	// 	}
 	// },
-	// development: {
-	// 	mongo: {
-	// 		uri: 'mongodb://localhost/software-PV-dev',
-	// 		options: {
-	// 			debug: true
-	// 		}
-	// 	}
-	// }
+	development: {
+		mongo: {
+			uri: 'mongodb://localhost/API-Rest',
+			options: {
+				debug: true
+			}
+		}
+	}
 	// production: {
 	// 	ip: process.env.IP || undefined,
 	// 	port: process.env.PORT || 8080,
@@ -57,7 +57,7 @@ const config = {
 	// }
 }
 
-// module.exports = _.merge(config.all, config[config.all.env])
+module.exports = _.merge(config.all, config[config.all.env])
 // export default module.exports
-module.exports = config.all
+// module.exports = config.all
 export default module.exports

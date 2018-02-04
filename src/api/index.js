@@ -8,11 +8,6 @@ import movies from './movies'
 const router = new Router();
 
 router.use('/movies', movies);
-// router.use('/products', product);
-// router.use('/suppliers', supplier);
-// router.use('/register', register);
-// router.use('/transaction', transaction);
-// router.use('/sales', sale);
 
 /**
  * @apiDefine user User access only

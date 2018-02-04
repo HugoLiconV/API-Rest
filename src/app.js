@@ -1,13 +1,14 @@
 import http from 'http'
-// import { env, mongo, port, ip } from './config'
-import {env, port, ip} from './config'
-// import mongoose from './services/mongoose'
+import { env, mongo, port, ip } from './config'
+// import {env, port, ip} from './config'
+import mongoose from './services/mongoose'
 import express from './services/express'
 import api from './api'
 import chalk from 'chalk'
 
 const app = express(api)
-// const app = express();
+
+mongoose.connect(mongo.uri, { useMongoClient: true });
 
 const server = http.createServer(app)
 // app.listen(3000, ()=>{
