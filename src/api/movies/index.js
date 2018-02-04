@@ -1,7 +1,7 @@
 'use strict'
 
 const express = require('express');
-// import Movie from './model'
+const { title, vote_average, release_date, poster_path, overview, genres } = schema.tree;
 export Movie, { schema } from './model'
 import { create, show, showById, update, destroy } from './controller'
 // import model from './model';
@@ -15,6 +15,14 @@ const router = express.Router()
 // 	res.status(200).send( {movie: `Pulp Fiction`});
 // });
 
+/**
+ * @api {get} /movies Regresa las películas.
+ * @apiName RetrieveMovies
+ * @apiGroup Movies
+ * @apiUse listParams
+ * @apiSuccess {Object[]} movies Lista de películas.
+ * @apiError {Object} 400 Parametros incorrectos o valores erroneos.
+ */
 router.get('/', show);
 
 // router.get('/:movieId', (req, res)=>{
@@ -22,6 +30,14 @@ router.get('/', show);
 // 	res.status(200).send({ movie: `movie with id ${res.params.movieId}: Pulp Fiction`})
 // })
 
+/**
+ * @api {get} /movie/:id Regresa una película en específico
+ * @apiName RetrieveMovie
+ * @apiGroup Movies
+ * @apiSuccess {Object} movie Datos de la pelicula
+ * @apiError {Object} 400 Parametros incorrectos o valores erroneos.
+ * @apiError 404 Película no encontrada.
+ */
 router.get('/:id', showById);
 
 // router.post('/', (req, res) => {
@@ -42,15 +58,51 @@ router.get('/:id', showById);
 // })
 
 // title, vote_average, release_date, poster_path, overview, genres
-const { title, vote_average, release_date, poster_path, overview, genres } = schema.tree;
+
+/**
+ * @api {post} /movies Guarda una película
+ * @apiName SaveMovie
+ * @apiGroup Movies
+ * @apiParam title Nombre de la película.
+ * @apiParam vote_average Puntuación promedio.
+ * @apiParam release_date Fecha de estreno (año).
+ * @apiParam poster_path URL del poster.
+ * @apiParam overview Descripción o resumen.
+ * @apiParam genres Géneros de la película.
+ * @apiSuccess {Object} movie Datos de la película.
+ * @apiError {Object} 400 Parametros incorrectos o valores erroneos.
+ * @apiError 404 Película no encontrada.
+ */
 router.post('/', body( 
 	{title, vote_average, release_date, poster_path, overview, genres} ),
 	create)
 
+
+/**
+ * @api {put} /movies/:id Actualizar una película
+ * @apiName UpdateMovie
+ * @apiGroup Movies
+ * @apiParam title Nombre de la película.
+ * @apiParam vote_average Puntuación promedio.
+ * @apiParam release_date Fecha de estreno (año).
+ * @apiParam poster_path URL del poster.
+ * @apiParam overview Descripción o resumen.
+ * @apiParam genres Géneros de la película.
+ * @apiSuccess {Object} movie Datos de la película.
+ * @apiError {Object} 400 Parametros incorrectos o valores erroneos.
+ * @apiError 404 Película no encontrada.
+ */
 router.put('/:id', body(
 	{ title, vote_average, release_date, poster_path, overview, genres }),
 	update )
 
+	/**
+ * @api {delete} /movies/:id Eliminar película
+ * @apiName DeleteMovie
+ * @apiGroup Movies
+ * @apiSuccess (Success 204) 204 Sin contenido.
+ * @apiError 404 Película no encontrada.
+ */
 router.delete('/:id', destroy)
 
 export default router;
