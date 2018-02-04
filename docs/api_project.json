@@ -1,0 +1,1 @@
+{  "name": "api-rest",  "version": "1.0.0",  "description": "API REST con NodeJS y Express",  "sampleUrl": false,  "apidoc": "0.2.0",  "generator": {    "name": "apidoc",    "time": "2018-02-04T06:37:01.807Z",    "url": "http://apidocjs.com",    "version": "0.16.1"  }}
