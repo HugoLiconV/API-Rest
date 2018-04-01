@@ -1,21 +1,21 @@
 import path from 'path'
 import _ from 'lodash'
 
-// const requireProcessEnv = (name) => {
-// 	if (!process.env[name]) {
-// 		throw new Error('You must set the ' + name + ' environment variable')
-// 	}
-// 	return process.env[name]
-// }
+const requireProcessEnv = (name) => {
+	if (!process.env[name]) {
+		throw new Error('You must set the ' + name + ' environment variable')
+	}
+	return process.env[name]
+}
 
 
-// if (process.env.NODE_ENV !== 'production') {
-// 	const dotenv = require('dotenv-safe')
-// 	dotenv.load({
-// 		path: path.join(__dirname, '../.env'),
-// 		sample: path.join(__dirname, '../.env.example')
-// 	})
-// }
+if (process.env.NODE_ENV !== 'production') {
+	const dotenv = require('dotenv-safe')
+	dotenv.load({
+		path: path.join(__dirname, '../.env'),
+		sample: path.join(__dirname, '../.env.example')
+	})
+}
 
 
 const config = {
@@ -32,14 +32,14 @@ const config = {
 			}
 		}
 	},
-	// test: {
-	// 	mongo: {
-	// 		uri: 'mongodb://localhost/software-PV-test',
-	// 		options: {
-	// 			debug: false
-	// 		}
-	// 	}
-	// },
+	test: {
+		mongo: {
+			uri: 'mongodb://localhost/API-Rest-test',
+			options: {
+				debug: false
+			}
+		}
+	},
 	development: {
 		mongo: {
 			uri: 'mongodb://localhost/API-Rest',
@@ -55,9 +55,7 @@ const config = {
 	// 		uri: process.env.MONGODB_URI || `mongodb://${user}:${psw}@ds113626.mlab.com:13626/software-pv`
 	// 	}
 	// }
-}
+};
 
-module.exports = _.merge(config.all, config[config.all.env])
-// export default module.exports
-// module.exports = config.all
+module.exports = _.merge(config.all, config[config.all.env]);
 export default module.exports
