@@ -1,3 +1,5 @@
+'use strict';
+
 import mongoose, { Schema } from 'mongoose'
 
 // title, vote_average, release_date, poster_path, overview, genres
