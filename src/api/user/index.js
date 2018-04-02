@@ -3,7 +3,7 @@
 const express = require('express');
 const { email, displayName, avatar, password, signupDate, lastLogin } = schema.tree;
 export User, { schema } from './model'
-import { create, show, showById, update, destroy } from './controller'
+import { signUp, signIn, show, showById, update, destroy } from './controller'
 import { middleware as body } from 'bodymen'
 import { schema } from './model'
 
@@ -46,10 +46,14 @@ router.get('/:id', showById);
  * @apiError {Object} 400 Parametros incorrectos o valores erroneos.
  * @apiError 404 Usuario no encontrado.
  */
-router.post('/', body(
-	{email, displayName, avatar, password, signupDate, lastLogin} ),
-	create)
+router.post('/signup', body(
+	{email, displayName}),
+	signUp);
 
+router.post('/signin', body(
+	{email, password},
+	signIn
+))
 
 /**
  * @api {put} /movies/:id Actualizar un usuario.

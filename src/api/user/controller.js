@@ -1,69 +1,62 @@
 import _ from 'lodash'
-import { User }from '.'
+import { success, notFound } from '../../services/response/'
+import { User } from '.'
+import { createToken } from "../../services/tokens";
 
-/* const success = (res, status) => (entity)=>{
-	if (entity){
-		res.status(status || 200).json(entity)
-	}return null;
-} */
+export const signUp = (req, res) => {
+	const user = new User({
+		email: req.body.email,
+		displayName: req.body.displayName,
+		password: req.body.password
+	});
+	
+	user.save((err)=>{
+		if (err) res.status(500).send({ message: `Error al crear el usuario: ${err}` });
+		
+		return res.status(200).send({ token: createToken(user) });
+	})
+};
 
-const success = function(res, status) {
-	return function (entity) {
-		if (entity) {
-			res.status(status || 200).json(entity)
-		}return null;
-	}
-}
+export const signIn = (req, res) => {
+	User.find({ email: req.body.email }, (err, user)=>{
+		if(err) return res.status(500).send({ message: err })
+		if(!user) return res.status(404).send({ message: "No existe el usuario" });
+		
+		req.user = user;
+		res.status(200).send({ message: `Te has logueado correctamente`, token: createToken(user) })
+	})
+};
 
-const notFound = function(res) {
-	return function (entity) {
-		if (entity)
-			return entity
-		console.log('Error 404 Not Found');
-		res.status(404).end();
-		return null
-	}
-}
-
-export const create = ( {bodymen: {body }}, res, next) =>
-	Movie.create(body)
-		.then(movie => movie.view())
-		// .then((movie)=>{
-		// 	if (movie){
-		// 		res.status(201).json(movie)
-		// 	}return null
-		// })
-		.then((movie) => success(res, 201)(movie))
-		.catch(next)
-
+export const create = ({ bodymen: {body} }, res, next) =>
+	User.create(body)
+		.then(user => user.view(true))
+		.then(success(res, 201))
+		.catch(next);
 
 export const show = (req, res, next) =>
-	Movie.find( {})
-		.then((movies) => movies.map((movie) => movie.view()))
+	User.find({})
+		.then((users) => users.map((user) => user.view()))
 		.then(success(res))
-		.catch(next)
+		.catch(next);
 
-export const showById = ( { params }, res, next) => {
-	// console.log(params.id.toString())
-	Movie.findById(params.id)
-		.then((movie) => notFound(res)(movie))
-		.then((movie) => movie?movie.view():null)
-		.then(success(res))
-		.catch(next)
-}
-
-export const update = ({ bodymen: { body }, params } , res, next) =>  {
-	Movie.findById(params.id)
+export const showById	= ({ params }, res, next) =>
+	User.findById(params.id)
 		.then(notFound(res))
-		.then((movie) => movie?_.merge(movie, body).save():null)
-		.then((movie) => movie?movie.view(true):null)
+		.then((user) => user ? user.view() : null)
 		.then(success(res))
-		.catch(next)
-}
+		.catch(next);
 
-export const destroy = ( {params }, res, next) =>
-	Movie.findById(params.id)
+export const update = ({ bodymen: { body }, params }, res, next) =>
+	User.findById(params.id)
 		.then(notFound(res))
-		.then((movie) => movie?movie.remove():null)
+		.then((user) => user ? _.merge(user, body).save() : null)
+		.then((user) => user ? user.view(true) : null)
+		.then(success(res))
+		.catch(next);
+
+export const destroy = ({ params }, res, next) =>
+	User.findById(params.id)
+		.then(notFound(res))
+		.then((user) => user ? user.remove() : null)
 		.then(success(res, 204))
-		.catch(next)
+		.catch(next);

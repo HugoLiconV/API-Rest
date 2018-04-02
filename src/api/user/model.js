@@ -6,14 +6,33 @@ import crypto from 'crypto';
 
 // email, displayName, avatar, password, signupDate, lastLogin
 const UserSchema = new Schema({
-	email: { type: String, unique: true, lowercase: true },
-	displayName: String,
-	avatar: String,
-	password: { type: String, select: false },
+	email: {
+		type: String,
+		match: /^\S+@\S+\.\S+$/,
+		required: true,
+		unique: true,
+		trim: true,
+		lowercase: true
+	},
+	displayName: {
+		type: String,
+		index: true,
+		trim: true
+	},
+	avatar: {
+		type: String,
+		trim: true
+	},
+	password: {
+		type: String,
+		required: true,
+		minlength: 6,
+		select: false
+	},
 	signupDate: { type: Date, default: Date.now() },
 	lastLogin: Date
 }, {
-	timestamps: false
+	timestamps: true
 });
 
 UserSchema.pre('save', (next)=>{

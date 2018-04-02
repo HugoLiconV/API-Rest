@@ -3,6 +3,10 @@
   "version": "1.0.0",
   "description": "API REST con NodeJS y Express",
   "main": "src",
+  "jest": {
+    "testEnvironment": "node",
+    "setupTestFrameworkScriptFile": "<rootDir>/test/setup.js"
+  },
   "scripts": {
     "start": "node .",
     "dev": "nodemon -i \"*.test.js\" .",
@@ -10,7 +14,8 @@
     "lint": "eslint src",
     "docs": "apidoc -i src -o docs && apidoc-markdown2 -p docs -o DOCS.md",
     "postdocs": "opn ./docs/index.html",
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest --colors",
+    "test:movies": "npm test src/api/movies/index\".test\".js$",
     "test:unit": "npm test \"src/**/!(index).test.js\"",
     "test:integration": "npm test \"src/**/index.test.js\"",
     "coverage": "npm test -- --coverage",
@@ -31,6 +36,7 @@
     "nock": "^9.0.2",
     "nodemon": "^1.10.2",
     "opn-cli": "^3.1.0",
+    "sinon": "^1.17.5",
     "supertest": "^2.0.0",
     "supertest-as-promised": "^4.0.0"
   },
@@ -53,6 +59,7 @@
     "express": "4.16.2",
     "jwt-simple": "0.5.1",
     "lodash": "4.17.4",
+    "moment": "2.22.0",
     "mongoose": "4.13.4",
     "mongoose-create-unique": "^0.4.1",
     "mongoose-keywords": "^0.3.1",

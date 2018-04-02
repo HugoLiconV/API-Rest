@@ -6,7 +6,7 @@ const requireProcessEnv = (name) => {
 		throw new Error('You must set the ' + name + ' environment variable')
 	}
 	return process.env[name]
-}
+};
 
 
 if (process.env.NODE_ENV !== 'production') {
@@ -24,6 +24,8 @@ const config = {
 		root: path.join(__dirname, '..'),
 		port: process.env.PORT || 3000,
 		ip: process.env.IP || '127.0.0.1',
+		masterKey: requireProcessEnv('MASTER_KEY'),
+		jwtSecret: requireProcessEnv('JWT_SECRET'),
 		mongo: {
 			options: {
 				db: {
@@ -57,5 +59,5 @@ const config = {
 	// }
 };
 
-module.exports = _.merge(config.all, config[config.all.env]);
+module.exports = _.merge(config.all, config[config.all.env])
 export default module.exports
