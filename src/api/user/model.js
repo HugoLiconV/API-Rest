@@ -3,7 +3,10 @@
 import mongoose, { Schema } from 'mongoose'
 import bcrypt from 'bcrypt-nodejs';
 import crypto from 'crypto';
-
+import randtoken from 'rand-token'
+import mongoose, { Schema } from 'mongoose'
+import mongooseKeywords from 'mongoose-keywords'
+import { env } from '../../config'
 // email, displayName, avatar, password, signupDate, lastLogin
 const UserSchema = new Schema({
 	email: {
@@ -51,23 +54,31 @@ UserSchema.pre('save', (next)=>{
 	});
 });
 
+UserSchema.path('email').set(function (email) {
+	if (!this.avatar || this.avatar.indexOf('https://gravatar.com') === 0){
+		const hash = crypto.createHash('md5').update(this.email).digest('hex');
+		this.avatar = `https://gravatar.com/avatar/${hash}?s=200&d=retro`
+	}
+	
+	if(!this.name){
+		this.name = email.replace(/^(.+)@.+$/, '$1');
+	}
+	
+	return email
+});
 
 // email, displayName, avatar, password, signupDate, lastLogin
 UserSchema.methods = {
 	view(full) {
-		const view = {
-			//simple view
-			id: this.id,
-			email: this.email,
-			displayName: this.displayName,
-			avatar: this.avatar,
-			signupDate: this.signupDate,
-			lastLogin: this.lastLogin
-		};
+		let view = {};
+		let fields = ['id', 'name', 'avatar']
 
-		return full ? {
-			...view
-		} : view
+		if (full) {
+			fields = [...fields, 'email', 'createdAt']
+		}
+
+		fields.forEach((field) => { view[field] = this[field] })
+		return view
 	},
 	
 	gravatar() {
