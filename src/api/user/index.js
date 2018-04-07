@@ -1,85 +1,120 @@
-'use strict'
-
-const express = require('express');
-const { email, displayName, avatar, password, signupDate, lastLogin } = schema.tree;
-export User, { schema } from './model'
-import { signUp, signIn, show, showById, update, destroy } from './controller'
+import { Router } from 'express'
+import { middleware as query } from 'querymen'
 import { middleware as body } from 'bodymen'
+import { password as passwordAuth, master, token } from '../../services/passport'
+import { index, showMe, show, create, update, updatePassword, destroy } from './controller'
 import { schema } from './model'
+export User, { schema } from './model'
 
-const router = express.Router()
-
+const router = new Router()
+const { email, password, name, picture, role } = schema.tree
 
 /**
- * @api {get} /users Regresa todos los usuarios.
+ * @api {get} /users Retrieve users
  * @apiName RetrieveUsers
- * @apiGroup Users
+ * @apiGroup User
+ * @apiPermission admin
+ * @apiParam {String} access_token User access_token.
  * @apiUse listParams
- * @apiSuccess {Object[]} movies Lista de usuarios.
- * @apiError {Object} 400 Parametros incorrectos o valores erroneos.
+ * @apiSuccess {Object[]} users List of users.
+ * @apiError {Object} 400 Some parameters may contain invalid values.
+ * @apiError 401 Admin access only.
  */
-router.get('/', show);
-
+router.get('/',
+	token({ required: true, roles: ['admin'] }),
+	query(),
+	index)
 
 /**
- * @api {get} /users/:id Regresa un usuario en específico
+ * @api {get} /users/me Retrieve current user
+ * @apiName RetrieveCurrentUser
+ * @apiGroup User
+ * @apiPermission user
+ * @apiParam {String} access_token User access_token.
+ * @apiSuccess {Object} user User's data.
+ */
+router.get('/me',
+	token({ required: true }),
+	showMe)
+
+/**
+ * @api {get} /users/:id Retrieve user
  * @apiName RetrieveUser
- * @apiGroup Users
- * @apiSuccess {Object} user Datos del usuario
- * @apiError {Object} 400 Parametros incorrectos o valores erroneos.
- * @apiError 404 Usuario no encontrado.
+ * @apiGroup User
+ * @apiPermission public
+ * @apiSuccess {Object} user User's data.
+ * @apiError 404 User not found.
  */
-router.get('/:id', showById);
-
-// email, displayName, avatar, password, signupDate, lastLogin
-/**
- * @api {post} /users Guarda un usuario
- * @apiName SaveUser
- * @apiGroup Users
- * @apiParam email Email del usuario.
- * @apiParam displayName Nombre del usuario
- * @apiParam avatar URL del avatar del usuario
- * @apiParam password Contraseña del usuario
- * @apiParam signupDate Fecha de creación de la cuenta
- * @apiParam lastLogin Fecha del último inicio de sesión.
- * @apiSuccess {Object} user Datos del usuario 
- * @apiError {Object} 400 Parametros incorrectos o valores erroneos.
- * @apiError 404 Usuario no encontrado.
- */
-router.post('/signup', body(
-	{email, displayName}),
-	signUp);
-
-router.post('/signin', body(
-	{email, password},
-	signIn
-))
+router.get('/:id',
+	show)
 
 /**
- * @api {put} /movies/:id Actualizar un usuario.
+ * @api {post} /users Create user
+ * @apiName CreateUser
+ * @apiGroup User
+ * @apiPermission master
+ * @apiParam {String} access_token Master access_token.
+ * @apiParam {String} email User's email.
+ * @apiParam {String{6..}} password User's password.
+ * @apiParam {String} [name] User's name.
+ * @apiParam {String} [picture] User's picture.
+ * @apiParam {String=user,admin} [role=user] User's picture.
+ * @apiSuccess (Sucess 201) {Object} user User's data.
+ * @apiError {Object} 400 Some parameters may contain invalid values.
+ * @apiError 401 Master access only.
+ * @apiError 409 Email already registered.
+ */
+router.post('/',
+	master(),
+	body({ email, password, name, picture, role }),
+	create)
+
+/**
+ * @api {put} /users/:id Update user
  * @apiName UpdateUser
- * @apiGroup Users
- * @apiParam email Email del usuario.
- * @apiParam displayName Nombre del usuario
- * @apiParam avatar URL del avatar del usuario
- * @apiParam password Contraseña del usuario
- * @apiParam signupDate Fecha de creación de la cuenta
- * @apiParam lastLogin Fecha del último inicio de sesión.
- * @apiSuccess {Object} user Datos del usuario actualizados.
- * @apiError {Object} 400 Parametros incorrectos o valores erroneos.
- * @apiError 404 Usuario no encontrado.
+ * @apiGroup User
+ * @apiPermission user
+ * @apiParam {String} access_token User access_token.
+ * @apiParam {String} [name] User's name.
+ * @apiParam {String} [picture] User's picture.
+ * @apiSuccess {Object} user User's data.
+ * @apiError {Object} 400 Some parameters may contain invalid values.
+ * @apiError 401 Current user or admin access only.
+ * @apiError 404 User not found.
  */
-router.put('/:id', body(
-	{email, displayName, avatar, password, signupDate, lastLogin}),
-	update )
+router.put('/:id',
+	token({ required: true }),
+	body({ name, picture }),
+	update)
 
 /**
- * @api {delete} /users/:id Eliminar usuario
- * @apiName DeleteUser
- * @apiGroup Users
- * @apiSuccess (Success 204) 204 Sin contenido.
- * @apiError 404 Usuario no encontrada.
+ * @api {put} /users/:id/password Update password
+ * @apiName UpdatePassword
+ * @apiGroup User
+ * @apiHeader {String} Authorization Basic authorization with email and password.
+ * @apiParam {String{6..}} password User's new password.
+ * @apiSuccess (Success 201) {Object} user User's data.
+ * @apiError {Object} 400 Some parameters may contain invalid values.
+ * @apiError 401 Current user access only.
+ * @apiError 404 User not found.
  */
-router.delete('/:id', destroy)
+router.put('/:id/password',
+	passwordAuth(),
+	body({ password }),
+	updatePassword)
 
-export default router;
+/**
+ * @api {delete} /users/:id Delete user
+ * @apiName DeleteUser
+ * @apiGroup User
+ * @apiPermission admin
+ * @apiParam {String} access_token User access_token.
+ * @apiSuccess (Success 204) 204 No Content.
+ * @apiError 401 Admin access only.
+ * @apiError 404 User not found.
+ */
+router.delete('/:id',
+	token({ required: true, roles: ['admin'] }),
+	destroy)
+
+export default router

@@ -1,62 +1,85 @@
 import _ from 'lodash'
 import { success, notFound } from '../../services/response/'
 import { User } from '.'
-import { createToken } from "../../services/tokens";
 
-export const signUp = (req, res) => {
-	const user = new User({
-		email: req.body.email,
-		displayName: req.body.displayName,
-		password: req.body.password
-	});
-	
-	user.save((err)=>{
-		if (err) res.status(500).send({ message: `Error al crear el usuario: ${err}` });
-		
-		return res.status(200).send({ token: createToken(user) });
-	})
-};
-
-export const signIn = (req, res) => {
-	User.find({ email: req.body.email }, (err, user)=>{
-		if(err) return res.status(500).send({ message: err })
-		if(!user) return res.status(404).send({ message: "No existe el usuario" });
-		
-		req.user = user;
-		res.status(200).send({ message: `Te has logueado correctamente`, token: createToken(user) })
-	})
-};
-
-export const create = ({ bodymen: {body} }, res, next) =>
-	User.create(body)
-		.then(user => user.view(true))
-		.then(success(res, 201))
-		.catch(next);
-
-export const show = (req, res, next) =>
-	User.find({})
+export const index = ({ querymen: { query, select, cursor } }, res, next) =>
+	User.find(query, select, cursor)
 		.then((users) => users.map((user) => user.view()))
 		.then(success(res))
-		.catch(next);
+		.catch(next)
 
-export const showById	= ({ params }, res, next) =>
+export const show = ({ params }, res, next) =>
 	User.findById(params.id)
 		.then(notFound(res))
 		.then((user) => user ? user.view() : null)
 		.then(success(res))
-		.catch(next);
+		.catch(next)
 
-export const update = ({ bodymen: { body }, params }, res, next) =>
-	User.findById(params.id)
+export const showMe = ({ user }, res) =>
+	res.json(user.view(true))
+
+export const create = ({ bodymen: { body } }, res, next) =>
+	User.create(body)
+		.then((user) => user.view(true))
+		.then(success(res, 201))
+		.catch((err) => {
+			/* istanbul ignore else */
+			if (err.name === 'MongoError' && err.code === 11000) {
+				res.status(409).json({
+					valid: false,
+					param: 'email',
+					message: 'email already registered'
+				})
+			} else {
+				next(err)
+			}
+		})
+
+export const update = ({ bodymen: { body }, params, user }, res, next) =>
+	User.findById(params.id === 'me' ? user.id : params.id)
 		.then(notFound(res))
+		.then((result) => {
+			if (!result) return null
+			const isAdmin = user.role === 'admin'
+			const isSelfUpdate = user.id === result.id
+			if (!isSelfUpdate && !isAdmin) {
+				res.status(401).json({
+					valid: false,
+					message: 'You can\'t change other user\'s data'
+				})
+				return null
+			}
+			return result
+		})
 		.then((user) => user ? _.merge(user, body).save() : null)
 		.then((user) => user ? user.view(true) : null)
 		.then(success(res))
-		.catch(next);
+		.catch(next)
+
+export const updatePassword = ({ bodymen: { body }, params, user }, res, next) =>
+	User.findById(params.id === 'me' ? user.id : params.id)
+		.then(notFound(res))
+		.then((result) => {
+			if (!result) return null
+			const isSelfUpdate = user.id === result.id
+			if (!isSelfUpdate) {
+				res.status(401).json({
+					valid: false,
+					param: 'password',
+					message: 'You can\'t change other user\'s password'
+				})
+				return null
+			}
+			return result
+		})
+		.then((user) => user ? user.set({ password: body.password }).save() : null)
+		.then((user) => user ? user.view(true) : null)
+		.then(success(res))
+		.catch(next)
 
 export const destroy = ({ params }, res, next) =>
 	User.findById(params.id)
 		.then(notFound(res))
 		.then((user) => user ? user.remove() : null)
 		.then(success(res, 204))
-		.catch(next);
+		.catch(next)

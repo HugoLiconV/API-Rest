@@ -8,7 +8,7 @@ import chalk from 'chalk'
 const app = express(api);
 const server = http.createServer(app);
 
-mongoose.connect(mongo.uri, { useMongoClient: true });
+mongoose.connect(mongo.uri);
 
 // start our server
 setImmediate(() => {

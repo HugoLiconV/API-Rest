@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import path from 'path'
 import _ from 'lodash'
 
@@ -6,7 +7,7 @@ const requireProcessEnv = (name) => {
 		throw new Error('You must set the ' + name + ' environment variable')
 	}
 	return process.env[name]
-};
+}
 
 
 if (process.env.NODE_ENV !== 'production') {
@@ -44,19 +45,19 @@ const config = {
 	},
 	development: {
 		mongo: {
-			uri: 'mongodb://localhost/API-Rest',
+			uri: 'mongodb://localhost/API-Rest-dev',
 			options: {
 				debug: true
 			}
 		}
+	},
+	production: {
+		ip: process.env.IP || undefined,
+		port: process.env.PORT || 8080,
+		mongo: {
+			uri: process.env.MONGODB_URI || `mongodb://localhost/API-Rest`
+		}
 	}
-	// production: {
-	// 	ip: process.env.IP || undefined,
-	// 	port: process.env.PORT || 8080,
-	// 	mongo: {
-	// 		uri: process.env.MONGODB_URI || `mongodb://${user}:${psw}@ds113626.mlab.com:13626/software-pv`
-	// 	}
-	// }
 };
 
 module.exports = _.merge(config.all, config[config.all.env])

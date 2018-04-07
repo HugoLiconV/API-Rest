@@ -1,6 +1,12 @@
 import { EventEmitter } from 'events'
-import mockgoose from 'mockgoose'
 import mongoose from '../src/services/mongoose'
+// import mockgoose from 'mockgoose'
+import {Mockgoose} from 'mockgoose';
+
+
+// var Mongoose = require('mongoose').Mongoose;
+// var mongoose = new Mongoose();
+
 import { mongo } from '../src/config'
 
 EventEmitter.defaultMaxListeners = Infinity
@@ -23,13 +29,15 @@ global.parseInt = parseInt
 global.parseFloat = parseFloat
 
 beforeAll(async () => {
-	await mockgoose(mongoose)
-	mongoose.connect(mongo.uri, { useMongoClient: true })
-})
+	let mockgoose = new Mockgoose(mongoose);
+	mockgoose.prepareStorage().then(() => {
+		mongoose.connect('mongodb://foobar/baz');
+	});
+});
 
 afterAll(() => {
 	mongoose.disconnect()
-})
+});
 
 afterEach(async () => {
 	const { collections } = mongoose.connection

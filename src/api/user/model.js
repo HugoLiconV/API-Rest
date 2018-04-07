@@ -1,14 +1,13 @@
-'use strict';
-
-import mongoose, { Schema } from 'mongoose'
-import bcrypt from 'bcrypt-nodejs';
-import crypto from 'crypto';
-import randtoken from 'rand-token'
+import crypto from 'crypto'
+import bcrypt from 'bcrypt'
 import mongoose, { Schema } from 'mongoose'
 import mongooseKeywords from 'mongoose-keywords'
 import { env } from '../../config'
-// email, displayName, avatar, password, signupDate, lastLogin
-const UserSchema = new Schema({
+
+const roles = ['user', 'admin']
+
+// email, password, name, role, picture
+const userSchema = new Schema({
 	email: {
 		type: String,
 		match: /^\S+@\S+\.\S+$/,
@@ -17,79 +16,80 @@ const UserSchema = new Schema({
 		trim: true,
 		lowercase: true
 	},
-	displayName: {
+	password: {
+		type: String,
+		required: true,
+		minlength: 6
+	},
+	name: {
 		type: String,
 		index: true,
 		trim: true
 	},
-	avatar: {
+	role: {
+		type: String,
+		enum: roles,
+		default: 'user'
+	},
+	picture: {
 		type: String,
 		trim: true
-	},
-	password: {
-		type: String,
-		required: true,
-		minlength: 6,
-		select: false
-	},
-	signupDate: { type: Date, default: Date.now() },
-	lastLogin: Date
+	}
 }, {
 	timestamps: true
-});
+})
 
-UserSchema.pre('save', (next)=>{
-	let user = this;
-	if (!user.isModified('password')) return next();
-	
-	bcrypt.genSalt(10, (err, salt) => {
-		if (err) return next(err);
-		
-		bcrypt.hash(user.password, salt, null, (err, hash) => {
-			if (err) return next(err)
-			
-			user.password = hash;
-			next();
-		});
-	});
-});
+userSchema.path('email').set(function (email) {
+	if (!this.picture || this.picture.indexOf('https://gravatar.com') === 0) {
+		const hash = crypto.createHash('md5').update(email).digest('hex')
+		this.picture = `https://gravatar.com/avatar/${hash}?d=identicon`
+	}
 
-UserSchema.path('email').set(function (email) {
-	if (!this.avatar || this.avatar.indexOf('https://gravatar.com') === 0){
-		const hash = crypto.createHash('md5').update(this.email).digest('hex');
-		this.avatar = `https://gravatar.com/avatar/${hash}?s=200&d=retro`
+	if (!this.name) {
+		this.name = email.replace(/^(.+)@.+$/, '$1')
 	}
-	
-	if(!this.name){
-		this.name = email.replace(/^(.+)@.+$/, '$1');
-	}
-	
+
 	return email
-});
+})
 
-// email, displayName, avatar, password, signupDate, lastLogin
-UserSchema.methods = {
-	view(full) {
-		let view = {};
-		let fields = ['id', 'name', 'avatar']
+userSchema.pre('save', function (next) {
+	if (!this.isModified('password')) return next()
+
+	/* istanbul ignore next */
+	const rounds = env === 'test' ? 1 : 9
+
+	bcrypt.hash(this.password, rounds).then((hash) => {
+		this.password = hash
+		next()
+	}).catch(next)
+})
+
+userSchema.methods = {
+	view (full) {
+		let view = {}
+		let fields = ['id', 'name', 'picture']
 
 		if (full) {
 			fields = [...fields, 'email', 'createdAt']
 		}
 
 		fields.forEach((field) => { view[field] = this[field] })
+
 		return view
 	},
-	
-	gravatar() {
-		if (!this.email) return `https://gravatar.com/avatar/?s=200&d=retro`;
-		
-		const md5 = crypto.createHash('md5').update(this.email).digest('hex');
-		return `https;//gravatar.com/avatar/${md5}/?s=200&d=retro`
+
+	authenticate (password) {
+		return bcrypt.compare(password, this.password).then((valid) => valid ? this : false)
 	}
 }
 
-const model = mongoose.model('User', UserSchema)
+userSchema.statics = {
+	roles
+}
+
+userSchema.plugin(mongooseKeywords, { paths: ['email', 'name'] })
+// console.log(user.keywords); // ['email', 'name'].
+const model = mongoose.model('User', userSchema)
 
 export const schema = model.schema
 export default model

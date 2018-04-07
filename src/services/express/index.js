@@ -8,7 +8,7 @@ import { errorHandler as bodyErrorHandler } from 'bodymen'
 import { env } from '../../config'
 
 export default (routes) => {
-	const app = express();
+	const app = express()
 
 	if (env === 'production' || env === 'development') {
 		app.use(cors())
@@ -16,12 +16,11 @@ export default (routes) => {
 		app.use(morgan('dev'))
 	}
 
-	app.use(bodyParser.urlencoded({ extended: false }));
-	app.use(bodyParser.json());
-	app.use('/api',routes);
+	app.use(bodyParser.urlencoded({ extended: false }))
+	app.use(bodyParser.json())
+	app.use(routes)
 	app.use(queryErrorHandler())
 	app.use(bodyErrorHandler())
-	return app;
-};
 
-
+	return app
+}

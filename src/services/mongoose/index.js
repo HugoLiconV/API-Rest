@@ -5,9 +5,9 @@ import mongoose from 'mongoose'
 import chalk from 'chalk';
 import { mongo }from '../../config'
 
-Object.keys(mongo.options).forEach((key) =>  {
+Object.keys(mongo.options).forEach((key) => {
 	mongoose.set(key, mongo.options[key])
-});
+})
 
 mongoose.Promise = Promise;
 /* istanbul ignore next */
