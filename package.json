@@ -32,9 +32,9 @@
 				"dotenv-safe": "4.0.3",
 				"eslint": "4.19.1",
 				"eslint-config-standard": "11.0.0",
-				"eslint-plugin-promise": "3.7.0",
 				"eslint-plugin-import": "2.10.0",
 				"eslint-plugin-node": "6.0.1",
+				"eslint-plugin-promise": "3.7.0",
 				"eslint-plugin-standard": "3.0.1",
 				"jest-cli": "22.4.3",
 				"mockgoose": "7.3.5",
@@ -42,8 +42,7 @@
 				"nodemon": "1.17.3",
 				"opn-cli": "3.1.0",
 				"sinon": "1.17.5",
-				"supertest": "2.0.0",
-				"supertest-as-promised": "4.0.0"
+				"supertest": "3.0.0"
 		},
 		"dependencies": {
 				"babel-core": "6.26.0",
@@ -52,7 +51,7 @@
 				"babel-preset-stage-1": "6.24.1",
 				"babel-runtime": "6.26.0",
 				"bcrypt": "1.0.2",
-				"bluebird": "3.4.0",
+				"bluebird": "3.5.1",
 				"body-parser": "1.15.1",
 				"bodymen": "1.0.1",
 				"chalk": "2.3.2",

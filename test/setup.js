@@ -39,22 +39,9 @@ beforeAll(async () => {
 	});
 });
 
-afterAll(async () => {
-	
-	// mongoose.disconnect()
-	// mongoose.connection.close()
-	// console.log('Desconectado');
-	try {
-		console.log('Desconectando de mongo...');
-		await mongoose.disconnect();
-		console.log('Desconectado');
-	} catch (error) {
-		console.log(`
-    You did something wrong dummy!
-    ${error}
-  `);
-		throw error;
-	}
+afterAll(() => {
+	mongoose.disconnect()
+	// setTimeout(() => process.exit(), 1000)
 });
 
 afterEach(async () => {
