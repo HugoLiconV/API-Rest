@@ -28,18 +28,37 @@ global.TypeError = TypeError
 global.parseInt = parseInt
 global.parseFloat = parseFloat
 
+let mockgoose = new Mockgoose(mongoose);
+
 beforeAll(async () => {
-	let mockgoose = new Mockgoose(mongoose);
+	console.log('Before All');
 	mockgoose.prepareStorage().then(() => {
-		mongoose.connect('mongodb://foobar/baz');
+		console.log(`conectando a mongo ${mongo.uri}... `)
+		mongoose.connect(mongo.uri);
+		console.log('conectado a mongo');
 	});
 });
 
-afterAll(() => {
-	mongoose.disconnect()
+afterAll(async () => {
+	
+	// mongoose.disconnect()
+	// mongoose.connection.close()
+	// console.log('Desconectado');
+	try {
+		console.log('Desconectando de mongo...');
+		await mongoose.disconnect();
+		console.log('Desconectado');
+	} catch (error) {
+		console.log(`
+    You did something wrong dummy!
+    ${error}
+  `);
+		throw error;
+	}
 });
 
 afterEach(async () => {
+	console.log('After Each')
 	const { collections } = mongoose.connection
 	const promises = []
 	Object.keys(collections).forEach((collection) => {
