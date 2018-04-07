@@ -1,12 +1,6 @@
 import { EventEmitter } from 'events'
+import mockgoose from 'mockgoose'
 import mongoose from '../src/services/mongoose'
-// import mockgoose from 'mockgoose'
-import {Mockgoose} from 'mockgoose';
-
-
-// var Mongoose = require('mongoose').Mongoose;
-// var mongoose = new Mongoose();
-
 import { mongo } from '../src/config'
 
 EventEmitter.defaultMaxListeners = Infinity
@@ -28,24 +22,16 @@ global.TypeError = TypeError
 global.parseInt = parseInt
 global.parseFloat = parseFloat
 
-let mockgoose = new Mockgoose(mongoose);
-
 beforeAll(async () => {
-	console.log('Before All');
-	mockgoose.prepareStorage().then(() => {
-		console.log(`conectando a mongo ${mongo.uri}... `)
-		mongoose.connect(mongo.uri);
-		console.log('conectado a mongo');
-	});
-});
+	await mockgoose(mongoose)
+	mongoose.connect(mongo.uri, { useMongoClient: true })
+})
 
 afterAll(() => {
 	mongoose.disconnect()
-	// setTimeout(() => process.exit(), 1000)
-});
+})
 
 afterEach(async () => {
-	console.log('After Each')
 	const { collections } = mongoose.connection
 	const promises = []
 	Object.keys(collections).forEach((collection) => {
@@ -53,3 +39,5 @@ afterEach(async () => {
 	})
 	await Promise.all(promises)
 })
+
+

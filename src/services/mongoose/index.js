@@ -21,9 +21,9 @@ mongoose.connection.on('error', (err) =>  {
 	process.exit(-1)
 });
 
-mongoose.connection.on('open', function () { 
-	console.log(chalk.bgBlack.rgb(0,255,0)('Connected to MongoDB'))
-});
+// mongoose.connection.on('open', function () { 
+// 	console.log(chalk.bgBlack.rgb(0,255,0)('Connected to MongoDB'))
+// });
 
 
 export default mongoose
