@@ -5,7 +5,9 @@ import mongooseKeywords from 'mongoose-keywords'
 import { env } from '../../config'
 
 const roles = ['user', 'admin']
+const genres = ['hombre', 'mujer']
 
+// TODO: add genre to schema
 const userSchema = new Schema({
 	email: {
 		type: String,
@@ -24,6 +26,11 @@ const userSchema = new Schema({
 		type: String,
 		index: true,
 		trim: true
+	},
+	genre: {
+		type: String,
+		lowercase: true,
+		enum: genres,
 	},
 	role: {
 		type: String,
@@ -105,10 +112,10 @@ userSchema.pre('save', function (next) {
 userSchema.methods = {
 	view (full) {
 		let view = {}
-		let fields = ['id', 'name', 'picture', 'phone', 'education', 'skills', 'achievements', 'address']
+		let fields = ['id', 'name', 'genre', 'picture', 'education', 'skills', 'achievements', 'address']
 
 		if (full) {
-			fields = [...fields, 'email', 'createdAt']
+			fields = [...fields, 'email', 'createdAt', 'phone']
 		}
 
 		fields.forEach((field) => { view[field] = this[field] })
@@ -122,7 +129,8 @@ userSchema.methods = {
 }
 
 userSchema.statics = {
-	roles
+	roles,
+	genres
 }
 
 userSchema.plugin(mongooseKeywords, { paths: ['email', 'name'] })

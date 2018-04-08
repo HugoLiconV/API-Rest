@@ -4,7 +4,33 @@ import { User } from '.'
 let user
 
 beforeEach(async () => {
-	user = await User.create({ name: 'user', email: 'a@a.com', password: '123456' })
+	user = await User.create({ 
+		name: 'user', 
+		email: 'a@a.com', 
+		password: '123456',
+		genre: "Hombre",
+		phone: "6141231231",
+		education: {
+			degree: "Ingeniería en Sistemas",
+			date: "2014 - 2018",
+			grade: "8.0"
+		},
+		skills: ["MySQL", "JAVA", "C++"],
+		achievements: [	{
+			title: "SOFE",
+			description: "lorem lorem",
+			date: "Octubre 2017"
+		},
+			{
+				title: "Otro SOFE",
+				description: "lorem lorem",
+				date: "Octubre 2018"
+			}],
+		address: {
+			city: "Chihuahua",
+			state: "Chihuahua"
+		}
+	})
 })
 
 describe('set email', () => {
@@ -38,7 +64,12 @@ describe('view', () => {
 		expect(view).toBeDefined()
 		expect(view.id).toBe(user.id)
 		expect(view.name).toBe(user.name)
+		expect(view.genre).toBe(user.genre)
 		expect(view.picture).toBe(user.picture)
+		expect(view.education).toBe(user.education)
+		expect(view.skills).toBe(user.skills)
+		expect(view.achievements).toBe(user.achievements)
+		expect(view.address).toBe(user.address)
 	})
 
 	it('returns full view', () => {
@@ -49,6 +80,13 @@ describe('view', () => {
 		expect(view.email).toBe(user.email)
 		expect(view.picture).toBe(user.picture)
 		expect(view.createdAt).toEqual(user.createdAt)
+		expect(view.genre).toBe(user.genre)
+		expect(view.picture).toBe(user.picture)
+		expect(view.education).toBe(user.education)
+		expect(view.skills).toBe(user.skills)
+		expect(view.achievements).toBe(user.achievements)
+		expect(view.address).toBe(user.address)
+		expect(view.phone).toEqual(user.phone)
 	})
 })
 
