@@ -10,6 +10,7 @@ import { env } from '../../config'
 export default (routes) => {
 	const app = express()
 
+	/* istanbul ignore next */
 	if (env === 'production' || env === 'development') {
 		app.use(cors())
 		app.use(compression())

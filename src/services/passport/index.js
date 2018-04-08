@@ -3,7 +3,6 @@ import { Schema } from 'bodymen'
 import { BasicStrategy } from 'passport-http'
 import { Strategy as BearerStrategy } from 'passport-http-bearer'
 import { Strategy as JwtStrategy, ExtractJwt } from 'passport-jwt'
-// eslint-disable-next-line import/named
 import { jwtSecret, masterKey } from '../../config'
 import User, { schema } from '../../api/user/model'
 

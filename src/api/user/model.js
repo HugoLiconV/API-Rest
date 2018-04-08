@@ -6,7 +6,6 @@ import { env } from '../../config'
 
 const roles = ['user', 'admin']
 
-// email, password, name, role, picture
 const userSchema = new Schema({
 	email: {
 		type: String,
@@ -34,6 +33,45 @@ const userSchema = new Schema({
 	picture: {
 		type: String,
 		trim: true
+	},
+	phone: {
+		type: String,
+		trim: true
+	},
+	education: {
+		type: Object,
+		degree: {
+			type: String,
+			trim: true,
+			required: true
+		},
+		date: {
+			type: String,
+			trim: true,
+		},		
+		grade: {
+			type: String,
+			trim: true,
+		}
+	},
+	skills: {
+		type: [String]
+	},
+	achievements: [{
+		title: String,
+		description: String,
+		date: String,
+	}],
+	address:{
+		type: Object,
+		city: {
+			type: String,
+			trim: true
+		},
+		state: {
+			type: String,
+			trim: true
+		}
 	}
 }, {
 	timestamps: true
@@ -67,7 +105,7 @@ userSchema.pre('save', function (next) {
 userSchema.methods = {
 	view (full) {
 		let view = {}
-		let fields = ['id', 'name', 'picture']
+		let fields = ['id', 'name', 'picture', 'phone', 'education', 'skills', 'achievements', 'address']
 
 		if (full) {
 			fields = [...fields, 'email', 'createdAt']
@@ -88,8 +126,9 @@ userSchema.statics = {
 }
 
 userSchema.plugin(mongooseKeywords, { paths: ['email', 'name'] })
-// console.log(user.keywords); // ['email', 'name'].
+
 const model = mongoose.model('User', userSchema)
 
 export const schema = model.schema
 export default model
+

@@ -1,30 +1,21 @@
-'use strict'
-
 import Promise from 'bluebird'
 import mongoose from 'mongoose'
-import chalk from 'chalk';
-import { mongo }from '../../config'
+import { mongo } from '../../config'
 
 Object.keys(mongo.options).forEach((key) => {
 	mongoose.set(key, mongo.options[key])
 })
 
-mongoose.Promise = Promise;
+mongoose.Promise = Promise
 /* istanbul ignore next */
-
 mongoose.Types.ObjectId.prototype.view = function () {
-	return {id:this.toString()}
-};
+	return { id: this.toString() }
+}
 
-mongoose.connection.on('error', (err) =>  {
-	console.error(chalk.bold.red('MongoDB connection error: ' + err));
+/* istanbul ignore next */
+mongoose.connection.on('error', (err) => {
+	console.error('MongoDB connection error: ' + err)
 	process.exit(-1)
-});
-
-// mongoose.connection.on('open', function () { 
-// 	console.log(chalk.bgBlack.rgb(0,255,0)('Connected to MongoDB'))
-// });
-
+})
 
 export default mongoose
-
