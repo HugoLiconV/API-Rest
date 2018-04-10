@@ -17,3 +17,5 @@ env:
   - CXX=g++-4.8
   - MASTER_KEY=masterKey
   - JWT_SECRET=jwtSecret
+	- USER_DB=userdb
+	- USER_PWD=pswdb

@@ -31,6 +31,8 @@ const config = {
 		ip: process.env.IP || '0.0.0.0',
 		masterKey: requireProcessEnv('MASTER_KEY'),
 		jwtSecret: requireProcessEnv('JWT_SECRET'),
+		pswdb: requireProcessEnv('USER_PWD'),
+		userdb: requireProcessEnv('USER_DB'),
 		mongo: {
 			options: {
 				db: {
