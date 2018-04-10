@@ -1,125 +1,219 @@
-<a name="top"></a>
-# api-rest v1.0.0
+# api-rest Job Board v1.0.0
 
 API REST con NodeJS y Express
 
-- [Movies](#movies)
-	- [Eliminar película](#eliminar-película)
-	- [Regresa una película en específico](#regresa-una-película-en-específico)
-	- [Regresa las películas.](#regresa-las-películas.)
-	- [Guarda una película](#guarda-una-película)
-	- [Actualizar una película](#actualizar-una-película)
+- [Article](#article)
+	- [Create article](#create-article)
+	- [Delete article](#delete-article)
+	- [Retrieve article](#retrieve-article)
+	- [Retrieve articles](#retrieve-articles)
+	- [Update article](#update-article)
+	
+- [Auth](#auth)
+	- [Authenticate](#authenticate)
+	
+- [User](#user)
+	- [Create user](#create-user)
+	- [Delete user](#delete-user)
+	- [Retrieve current user](#retrieve-current-user)
+	- [Retrieve user](#retrieve-user)
+	- [Retrieve users](#retrieve-users)
+	- [Update password](#update-password)
+	- [Update user](#update-user)
 	
 
 
-# Movies
+# Article
 
-## Eliminar película
-[Back to top](#top)
-
-
-
-	DELETE /movies/:id
+## Create article
 
 
 
+	POST /articles
 
 
-### Success 204
+### Parameters
 
-| Name     | Type       | Description                           |
-|:---------|:-----------|:--------------------------------------|
-| 204 |  | <p>Sin contenido.</p>|
+| Name    | Type      | Description                          |
+|---------|-----------|--------------------------------------|
+| access_token			| String			|  <p>user access token.</p>							|
+| title			| 			|  <p>Article's title.</p>							|
+| content			| 			|  <p>Article's content.</p>							|
 
-## Regresa una película en específico
-[Back to top](#top)
-
-
-
-	GET /movie/:id
-
+## Delete article
 
 
 
-
-### Success 200
-
-| Name     | Type       | Description                           |
-|:---------|:-----------|:--------------------------------------|
-| movie | Object | <p>Datos de la pelicula</p>|
-
-## Regresa las películas.
-[Back to top](#top)
+	DELETE /articles/:id
 
 
+### Parameters
 
-	GET /movies
+| Name    | Type      | Description                          |
+|---------|-----------|--------------------------------------|
+| access_token			| String			|  <p>user access token.</p>							|
+
+## Retrieve article
 
 
 
+	GET /articles/:id
 
 
-### Success 200
-
-| Name     | Type       | Description                           |
-|:---------|:-----------|:--------------------------------------|
-| movies | Object[] | <p>Lista de películas.</p>|
-
-## Guarda una película
-[Back to top](#top)
+## Retrieve articles
 
 
 
-	POST /movies
+	GET /articles
+
+
+### Parameters
+
+| Name    | Type      | Description                          |
+|---------|-----------|--------------------------------------|
+| q			| String			| **optional** <p>Query to search.</p>							|
+| page			| Number			| **optional** <p>Page number.</p>							|
+| limit			| Number			| **optional** <p>Amount of returned items.</p>							|
+| sort			| String[]			| **optional** <p>Order of returned items.</p>							|
+| fields			| String[]			| **optional** <p>Fields to be returned.</p>							|
+
+## Update article
 
 
 
+	PUT /articles/:id
 
 
-### Parameter Parameters
+### Parameters
 
-| Name     | Type       | Description                           |
-|:---------|:-----------|:--------------------------------------|
-| title |  | <p>Nombre de la película.</p>|
-| vote_average |  | <p>Puntuación promedio.</p>|
-| release_date |  | <p>Fecha de estreno (año).</p>|
-| poster_path |  | <p>URL del poster.</p>|
-| overview |  | <p>Descripción o resumen.</p>|
-| genres |  | <p>Géneros de la película.</p>|
+| Name    | Type      | Description                          |
+|---------|-----------|--------------------------------------|
+| access_token			| String			|  <p>user access token.</p>							|
+| title			| 			|  <p>Article's title.</p>							|
+| content			| 			|  <p>Article's content.</p>							|
 
+# Auth
 
-### Success 200
-
-| Name     | Type       | Description                           |
-|:---------|:-----------|:--------------------------------------|
-| movie | Object | <p>Datos de la película.</p>|
-
-## Actualizar una película
-[Back to top](#top)
+## Authenticate
 
 
 
-	PUT /movies/:id
+	POST /auth
+
+### Headers
+
+| Name    | Type      | Description                          |
+|---------|-----------|--------------------------------------|
+| Authorization			| String			|  <p>Basic authorization with email and password.</p>							|
+
+### Parameters
+
+| Name    | Type      | Description                          |
+|---------|-----------|--------------------------------------|
+| access_token			| String			|  <p>Master access_token.</p>							|
+
+# User
+
+## Create user
 
 
 
+	POST /users
 
 
-### Parameter Parameters
+### Parameters
 
-| Name     | Type       | Description                           |
-|:---------|:-----------|:--------------------------------------|
-| title |  | <p>Nombre de la película.</p>|
-| vote_average |  | <p>Puntuación promedio.</p>|
-| release_date |  | <p>Fecha de estreno (año).</p>|
-| poster_path |  | <p>URL del poster.</p>|
-| overview |  | <p>Descripción o resumen.</p>|
-| genres |  | <p>Géneros de la película.</p>|
+| Name    | Type      | Description                          |
+|---------|-----------|--------------------------------------|
+| access_token			| String			|  <p>Master access_token.</p>							|
+| email			| String			|  <p>User's email.</p>							|
+| password			| String			|  <p>User's password.</p>							|
+| name			| String			| **optional** <p>User's name.</p>							|
+| picture			| String			| **optional** <p>User's picture.</p>							|
+| role			| String			| **optional** <p>User's picture.</p>							|
+
+## Delete user
 
 
-### Success 200
 
-| Name     | Type       | Description                           |
-|:---------|:-----------|:--------------------------------------|
-| movie | Object | <p>Datos de la película.</p>|
+	DELETE /users/:id
+
+
+### Parameters
+
+| Name    | Type      | Description                          |
+|---------|-----------|--------------------------------------|
+| access_token			| String			|  <p>User access_token.</p>							|
+
+## Retrieve current user
+
+
+
+	GET /users/me
+
+
+### Parameters
+
+| Name    | Type      | Description                          |
+|---------|-----------|--------------------------------------|
+| access_token			| String			|  <p>User access_token.</p>							|
+
+## Retrieve user
+
+
+
+	GET /users/:id
+
+
+## Retrieve users
+
+
+
+	GET /users
+
+
+### Parameters
+
+| Name    | Type      | Description                          |
+|---------|-----------|--------------------------------------|
+| access_token			| String			|  <p>User access_token.</p>							|
+| q			| String			| **optional** <p>Query to search.</p>							|
+| page			| Number			| **optional** <p>Page number.</p>							|
+| limit			| Number			| **optional** <p>Amount of returned items.</p>							|
+| sort			| String[]			| **optional** <p>Order of returned items.</p>							|
+| fields			| String[]			| **optional** <p>Fields to be returned.</p>							|
+
+## Update password
+
+
+
+	PUT /users/:id/password
+
+### Headers
+
+| Name    | Type      | Description                          |
+|---------|-----------|--------------------------------------|
+| Authorization			| String			|  <p>Basic authorization with email and password.</p>							|
+
+### Parameters
+
+| Name    | Type      | Description                          |
+|---------|-----------|--------------------------------------|
+| password			| String			|  <p>User's new password.</p>							|
+
+## Update user
+
+
+
+	PUT /users/:id
+
+
+### Parameters
+
+| Name    | Type      | Description                          |
+|---------|-----------|--------------------------------------|
+| access_token			| String			|  <p>User access_token.</p>							|
+| name			| String			| **optional** <p>User's name.</p>							|
+| picture			| String			| **optional** <p>User's picture.</p>							|
+
 
