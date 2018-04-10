@@ -19,6 +19,10 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 
+const PRODUCTION_MONGO_URI = "ds241019.mlab.com:41019/job-board";
+const user = requireProcessEnv('USER_DB')
+const psw = requireProcessEnv('USER_PWD')
+
 const config = {
 	all: {
 		env: process.env.NODE_ENV || 'development',
@@ -55,7 +59,7 @@ const config = {
 		ip: process.env.IP || undefined,
 		port: process.env.PORT || 8080,
 		mongo: {
-			uri: process.env.MONGODB_URI || `mongodb://localhost/API-Rest`
+			uri: process.env.MONGODB_URI || `mongodb://${user}:${psw}@${PRODUCTION_MONGO_URI}`
 		}
 	}
 };
