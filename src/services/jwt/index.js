@@ -5,8 +5,10 @@ import { jwtSecret } from '../../config'
 const jwtSign = Promise.promisify(jwt.sign)
 const jwtVerify = Promise.promisify(jwt.verify)
 
-export const sign = (id, options, method = jwtSign) =>
-	method({ id }, jwtSecret, options)
+export const sign = (id, options, method = jwtSign) => 
+	method({id}, jwtSecret, {
+		expiresIn: '24h' // expires in 365 days
+	})
 
 export const signSync = (id, options) => sign(id, options, jwt.sign)
 
