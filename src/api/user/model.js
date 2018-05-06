@@ -3,11 +3,10 @@ import bcrypt from 'bcrypt'
 import mongoose, { Schema } from 'mongoose'
 import mongooseKeywords from 'mongoose-keywords'
 import { env } from '../../config'
-
 const roles = ['user', 'admin']
-const genres = ['hombre', 'mujer']
+const kindsOfProfiles = ['Student', 'Company']
+import Student from '../../api/student/model'
 
-// TODO: add genre to schema
 const userSchema = new Schema({
 	email: {
 		type: String,
@@ -26,14 +25,15 @@ const userSchema = new Schema({
 		type: String,
 		index: true,
 		trim: true
-	},
-	genre: {
+	},	
+	phone: {
 		type: String,
-		lowercase: true,
-		enum: genres,
+		required: true,
+		trim: true
 	},
 	role: {
 		type: String,
+		// required: true,
 		enum: roles,
 		default: 'user'
 	},
@@ -41,35 +41,8 @@ const userSchema = new Schema({
 		type: String,
 		trim: true
 	},
-	phone: {
-		type: String,
-		trim: true
-	},
-	education: {
-		type: Object,
-		degree: {
-			type: String,
-			trim: true,
-			required: true
-		},
-		date: {
-			type: String,
-			trim: true,
-		},		
-		grade: {
-			type: String,
-			trim: true,
-		}
-	},
-	skills: {
-		type: [String]
-	},
-	achievements: [{
-		title: String,
-		description: String,
-		date: String,
-	}],
 	address:{
+		required: true,
 		type: Object,
 		city: {
 			type: String,
@@ -79,6 +52,15 @@ const userSchema = new Schema({
 			type: String,
 			trim: true
 		}
+	},
+	kind: {
+		type: String,
+		required: true,
+		enum: kindsOfProfiles
+	},
+	profile: {
+		type: Schema.ObjectId, 
+		refPath: 'kind'
 	}
 }, {
 	timestamps: true
@@ -99,27 +81,39 @@ userSchema.path('email').set(function (email) {
 
 userSchema.pre('save', function (next) {
 	if (!this.isModified('password')) return next()
-
+	let that = this;
+	
 	/* istanbul ignore next */
 	const rounds = env === 'test' ? 1 : 9
 
+	that.id = new mongoose.Types.ObjectId()
+
+	Student.create({ user: this.id}, function (err, student) {
+		if (err) return err;
+		that.profile = student.id;
+	})
+	
+	console.log(`presave id ${this.id}`)
 	bcrypt.hash(this.password, rounds).then((hash) => {
 		this.password = hash
 		next()
 	}).catch(next)
 })
 
+
 userSchema.methods = {
 	view (full) {
 		let view = {}
-		let fields = ['id', 'name', 'genre', 'picture', 'education', 'skills', 'achievements', 'address']
-
+		// let fields = ['id', 'name', 'genre', 'picture', 'education', 'skills', 'achievements', 'address']
+		let fields = ['id', 'name', 'picture', 'address', 'kind']
+		
 		if (full) {
 			fields = [...fields, 'email', 'createdAt', 'phone']
 		}
 
 		fields.forEach((field) => { view[field] = this[field] })
-
+		// view.profile = this.profile.view(full);
+		
 		return view
 	},
 
@@ -130,7 +124,7 @@ userSchema.methods = {
 
 userSchema.statics = {
 	roles,
-	genres
+	kindsOfProfiles
 }
 
 userSchema.plugin(mongooseKeywords, { paths: ['email', 'name'] })

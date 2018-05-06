@@ -20,9 +20,9 @@
 				"postcoverage": "opn coverage/lcov-report/index.html"
 		},
 		"apidoc": {
-			"name": "api-rest Job Board",
-			"version": "1.0.0",
-			"url": "https://job-board-itchii.herokuapp.com/api"
+				"name": "api-rest Job Board",
+				"version": "1.0.0",
+				"url": "https://job-board-itchii.herokuapp.com/api"
 		},
 		"jest": {
 				"testEnvironment": "node",
