@@ -106,14 +106,14 @@ userSchema.methods = {
 		let view = {}
 		// let fields = ['id', 'name', 'genre', 'picture', 'education', 'skills', 'achievements', 'address']
 		let fields = ['id', 'name', 'picture', 'address', 'kind']
-		
+
 		if (full) {
 			fields = [...fields, 'email', 'createdAt', 'phone']
 		}
 
 		fields.forEach((field) => { view[field] = this[field] })
-		// view.profile = this.profile.view(full);
-		
+		view.profile = this.profile.view(full); 
+		console.log(this.profile.view(true))
 		return view
 	},
 

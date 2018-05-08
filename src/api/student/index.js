@@ -24,7 +24,7 @@ const { genre, education, skills, achievements } = schema.tree
  */
 router.post('/', 
 	token({ required: true }),
-	body({genre, education, skills}),
+	body({genre, education, skills, achievements: [Object] }),
 	create)
 
 /**

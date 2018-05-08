@@ -57,19 +57,6 @@ studentSchema.methods = {
 		return full ? {
 			...view
 		}: view
-		
-		// let view = {}
-    //
-		// let fields = ['id', 'genre', 'education', 'skills', 'achievements']
-		// // view.user = this.user.view(full)
-		//
-		// if (full) {
-		// 	fields = [...fields, 'createdAt']
-		// }
-		//
-		// fields.forEach((field) => { view[field] = this[field] })
-		//
-		// return view
 	}
 }
 
