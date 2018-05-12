@@ -7,7 +7,7 @@ import { schema } from './model'
 export Company, { schema } from './model'
 
 const router = new Router()
-const { RFC, razon, name, description } = schema.tree
+const { name, rfc, razon, description } = schema.tree
 
 /**
  * @api {post} /companies Create company
@@ -15,10 +15,8 @@ const { RFC, razon, name, description } = schema.tree
  * @apiGroup Company
  * @apiPermission user
  * @apiParam {String} access_token user access token.
- * @apiParam RFC Company's RFC.
+ * @apiParam rfc Company's rfc.
  * @apiParam razon Company's razon.
- * @apiParam name Company's name.
- * @apiParam description Company's description.
  * @apiSuccess {Object} company Company's data.
  * @apiError {Object} 400 Some parameters may contain invalid values.
  * @apiError 404 Company not found.
@@ -26,7 +24,7 @@ const { RFC, razon, name, description } = schema.tree
  */
 router.post('/',
   token({ required: true }),
-  body({ RFC, razon, name, description }),
+  body({ name, rfc, razon, description }),
   create)
 
 /**
@@ -57,7 +55,7 @@ router.get('/',
  * @apiError 401 user access only.
  */
 router.get('/:id',
-  token({ required: true }),
+  token({ name, rfc, razon, description }),
   show)
 
 /**
@@ -66,10 +64,8 @@ router.get('/:id',
  * @apiGroup Company
  * @apiPermission user
  * @apiParam {String} access_token user access token.
- * @apiParam RFC Company's RFC.
+ * @apiParam rfc Company's rfc.
  * @apiParam razon Company's razon.
- * @apiParam name Company's name.
- * @apiParam description Company's description.
  * @apiSuccess {Object} company Company's data.
  * @apiError {Object} 400 Some parameters may contain invalid values.
  * @apiError 404 Company not found.
@@ -77,7 +73,7 @@ router.get('/:id',
  */
 router.put('/:id',
   token({ required: true }),
-  body({ RFC, razon, name, description }),
+  body({ name, rfc, razon, description }),
   update)
 
 /**

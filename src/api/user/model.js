@@ -1,11 +1,14 @@
 import crypto from 'crypto'
 import bcrypt from 'bcrypt'
-import mongoose, { Schema } from 'mongoose'
+import mongoose, {Schema} from 'mongoose'
 import mongooseKeywords from 'mongoose-keywords'
-import { env } from '../../config'
+import {env} from '../../config'
+import Student from '../../api/student/model'
+import Company from '../../api/company/model'
+
 const roles = ['user', 'admin']
 const kindsOfProfiles = ['Student', 'Company']
-import Student from '../../api/student/model'
+
 
 const userSchema = new Schema({
 	email: {
@@ -25,7 +28,7 @@ const userSchema = new Schema({
 		type: String,
 		index: true,
 		trim: true
-	},	
+	},
 	phone: {
 		type: String,
 		required: true,
@@ -41,7 +44,7 @@ const userSchema = new Schema({
 		type: String,
 		trim: true
 	},
-	address:{
+	address: {
 		required: true,
 		type: Object,
 		city: {
@@ -59,12 +62,13 @@ const userSchema = new Schema({
 		enum: kindsOfProfiles
 	},
 	profile: {
-		type: Schema.ObjectId, 
+		type: Schema.ObjectId,
 		refPath: 'kind'
 	}
 }, {
 	timestamps: true
 })
+
 
 userSchema.path('email').set(function (email) {
 	if (!this.picture || this.picture.indexOf('https://gravatar.com') === 0) {
@@ -80,19 +84,31 @@ userSchema.path('email').set(function (email) {
 })
 
 userSchema.pre('save', function (next) {
-	if (!this.isModified('password')) return next()
 	let that = this;
-	
+	this.id = new mongoose.Types.ObjectId()
+
+
+	if (this.kind === kindsOfProfiles[0]) { //estudiante
+		Student.create({user: this.id}, function (err, student) {
+			if (err) return err;
+			that.profile = student.id;
+		})
+	} else { //empresa
+		console.log('empresa')
+		Company.create({user: this.id}, function (err, company) {
+			console.log('Creando perfil de empresa')
+			if (err) return console.log('err: '+err);
+			
+			that.profile = company.id;
+			console.log(`${that.profile} == ${company.id}`)
+		})
+	}
+
+	if (!this.isModified('password')) return next()
+
 	/* istanbul ignore next */
 	const rounds = env === 'test' ? 1 : 9
 
-	that.id = new mongoose.Types.ObjectId()
-
-	Student.create({ user: this.id}, function (err, student) {
-		if (err) return err;
-		that.profile = student.id;
-	})
-	
 	console.log(`presave id ${this.id}`)
 	bcrypt.hash(this.password, rounds).then((hash) => {
 		this.password = hash
@@ -102,22 +118,25 @@ userSchema.pre('save', function (next) {
 
 
 userSchema.methods = {
-	view (full) {
+	view(full) {
 		let view = {}
-		// let fields = ['id', 'name', 'genre', 'picture', 'education', 'skills', 'achievements', 'address']
 		let fields = ['id', 'name', 'picture', 'address', 'kind']
 
 		if (full) {
 			fields = [...fields, 'email', 'createdAt', 'phone']
 		}
 
-		fields.forEach((field) => { view[field] = this[field] })
-		view.profile = this.profile.view(full); 
-		console.log(this.profile.view(true))
+		
+		fields.forEach((field) => {
+			view[field] = this[field]
+		})
+		
+		view.profile = this.profile.view(full);
+		
 		return view
 	},
 
-	authenticate (password) {
+	authenticate(password) {
 		return bcrypt.compare(password, this.password).then((valid) => valid ? this : false)
 	}
 }
@@ -127,7 +146,7 @@ userSchema.statics = {
 	kindsOfProfiles
 }
 
-userSchema.plugin(mongooseKeywords, { paths: ['email', 'name'] })
+userSchema.plugin(mongooseKeywords, {paths: ['email', 'name']})
 
 const model = mongoose.model('User', userSchema)
 

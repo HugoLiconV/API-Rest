@@ -3,8 +3,8 @@ import auth from './auth'
 import student from './student'
 import article from './article'
 import user from './user';
-import company from './company'
 import opening from './opening'
+import company from './company'
 
 const router = new Router();
 
@@ -36,7 +36,7 @@ router.use('/users', user)
 router.use('/auth', auth)
 router.use('/articles', article)
 router.use('/openings', opening)
-// router.use('/companies', company)
+router.use('/companies', company)
 
 
 export default router;

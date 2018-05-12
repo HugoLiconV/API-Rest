@@ -1,46 +1,54 @@
-import mongoose, { Schema } from 'mongoose'
+import mongoose, {Schema} from 'mongoose'
 
 const companySchema = new Schema({
-  user: {
-    type: Schema.ObjectId,
-    ref: 'User',
-    required: true
-  },
-  RFC: {
-    type: String
-  },
-  razon: {
-    type: String
-  },
-  name: {
-    type: String
-  },
-  description: {
-    type: String
-  }
+	user: {
+		type: Schema.ObjectId,
+		ref: 'User',
+		required: true
+	},
+	name: {
+		type: String,
+		// required: true
+	},
+	rfc: {
+		type: String,
+		// required: true
+	},
+	razon: {
+		type: String,
+		// required: true,
+		// unique: true
+		//	TODO: verificar que la razon y el rfc sean unicos
+	},
+	description: {
+		type: String
+	},
+	openings: {
+		type: [{type: Schema.ObjectId, ref: 'Opening'}]
+	},
 }, {
-  timestamps: true
+	timestamps: true
 })
 
 companySchema.methods = {
-  view (full) {
-    const view = {
-      // simple view
-      id: this.id,
-      user: this.user.view(full),
-      RFC: this.RFC,
-      razon: this.razon,
-      name: this.name,
-      description: this.description,
-      createdAt: this.createdAt,
-      updatedAt: this.updatedAt
-    }
+	view(full) {
+		const view = {
+			// simple view
+			id: this.id,
+			user: this.user.view(full),
+			name: this.name,
+			rfc: this.rfc,
+			razon: this.razon,
+			description: this.description,
+			openings: this.openings
+			// createdAt: this.createdAt,
+			// updatedAt: this.updatedAt
+		}
 
-    return full ? {
-      ...view
-      // add properties for a full view
-    } : view
-  }
+		return full ? {
+			...view
+		} : view
+	}
 }
 
 const model = mongoose.model('Company', companySchema)

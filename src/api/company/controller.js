@@ -8,16 +8,19 @@ export const create = ({ user, bodymen: { body } }, res, next) =>
     .then(success(res, 201))
     .catch(next)
 
-export const index = ({ querymen: { query, select, cursor } }, res, next) =>
-  Company.find(query, select, cursor)
-    .populate('user')
-    .then((companies) => companies.map((company) => company.view()))
-    .then(success(res))
-    .catch(next)
+export const index = ({ querymen: { query, select, cursor } }, res, next) => 
+	Company.find(query, select, cursor)
+		.populate('user')
+		.populate('openings')
+		.then((companies) => companies.map((company) => company.view()))
+		.then(success(res))
+		.catch(next)
+
 
 export const show = ({ params }, res, next) =>
   Company.findById(params.id)
     .populate('user')
+		.populate('openings')
     .then(notFound(res))
     .then((company) => company ? company.view() : null)
     .then(success(res))

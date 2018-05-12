@@ -1,47 +1,74 @@
 import mongoose, { Schema } from 'mongoose'
 
+const carreers = [
+	'Ingeniería en Informática', 
+	'Ingeniería en Diseño Industrial', 
+	'Ingeniería en Gestión Empresarial', 
+	'Ingeniería en Industrial', 
+	'Ingeniería en Sistemas Computacionales',
+	'Arquitectrua',
+	'Licenciatura en administración'];
+
 const openingSchema = new Schema({
-  user: {
+  company: {
     type: Schema.ObjectId,
-    ref: 'User',
+    ref: 'Company',
     required: true
   },
   title: {
-    type: String
+    type: String,
+		required: true
   },
   location: {
-    type: String
+		type: Object,
+		city: {
+			type: String,
+			trim: true
+		},
+		state: {
+			type: String,
+			trim: true
+		}
   },
   salary: {
     type: String
   },
   date: {
-    type: String
+    type: Date,
+		default: Date.now()
   },
   description: {
-    type: String
+    type: String,
+		required: true
   },
   carreer: {
-    type: String
+    type: [String],
+		required: true,
+		enum: carreers
   }
 }, {
   timestamps: true
 })
+
+openingSchema.statics = {
+	carreers
+}
+
 
 openingSchema.methods = {
   view (full) {
     const view = {
       // simple view
       id: this.id,
-      user: this.user.view(full),
       title: this.title,
       location: this.location,
       salary: this.salary,
       date: this.date,
       description: this.description,
       carreer: this.carreer,
-      createdAt: this.createdAt,
-      updatedAt: this.updatedAt
+			company: this.company.view(full),
+      // createdAt: this.createdAt,
+      // updatedAt: this.updatedAt
     }
 
     return full ? {

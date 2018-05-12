@@ -5,7 +5,7 @@ let user, company
 
 beforeEach(async () => {
   user = await User.create({ email: 'a@a.com', password: '123456' })
-  company = await Company.create({ user, RFC: 'test', razon: 'test', name: 'test', description: 'test' })
+  company = await Company.create({ user, rfc: 'test', razon: 'test' })
 })
 
 describe('view', () => {
@@ -15,10 +15,8 @@ describe('view', () => {
     expect(view.id).toBe(company.id)
     expect(typeof view.user).toBe('object')
     expect(view.user.id).toBe(user.id)
-    expect(view.RFC).toBe(company.RFC)
+    expect(view.rfc).toBe(company.rfc)
     expect(view.razon).toBe(company.razon)
-    expect(view.name).toBe(company.name)
-    expect(view.description).toBe(company.description)
     expect(view.createdAt).toBeTruthy()
     expect(view.updatedAt).toBeTruthy()
   })
@@ -29,10 +27,8 @@ describe('view', () => {
     expect(view.id).toBe(company.id)
     expect(typeof view.user).toBe('object')
     expect(view.user.id).toBe(user.id)
-    expect(view.RFC).toBe(company.RFC)
+    expect(view.rfc).toBe(company.rfc)
     expect(view.razon).toBe(company.razon)
-    expect(view.name).toBe(company.name)
-    expect(view.description).toBe(company.description)
     expect(view.createdAt).toBeTruthy()
     expect(view.updatedAt).toBeTruthy()
   })

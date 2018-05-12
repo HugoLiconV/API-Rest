@@ -23,16 +23,18 @@ export const show = ({ params }, res, next) =>
     .then(success(res))
     .catch(next)
 
-export const update = ({ user, bodymen: { body }, params }, res, next) =>
-  Student.findById(params.id)
-    .populate('user')
-    .then(notFound(res))
-    .then(authorOrAdmin(res, user, 'user'))
-    .then((student) => student ? _.merge(student, body).save() : null)
-    .then((student) => student ? student.view(true) : null)
-    .then(success(res))
-    .catch(next)
-
+export const update = ({ user, bodymen: { body }, params }, res, next) => {
+	console.log(user)
+	console.log(body)
+	Student.findById(params.id)
+		.populate('user')
+		.then(notFound(res))
+		.then(authorOrAdmin(res, user, 'user'))
+		.then((student) => student ? _.merge(student, body).save() : null)
+		.then((student) => student ? student.view(true) : null)
+		.then(success(res))
+		.catch(next)
+}
 export const destroy = ({ user, params }, res, next) =>
   Student.findById(params.id)
     .then(notFound(res))
