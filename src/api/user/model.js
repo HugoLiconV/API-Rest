@@ -7,7 +7,7 @@ import Student from '../../api/student/model'
 import Company from '../../api/company/model'
 
 const roles = ['user', 'admin']
-const kindsOfProfiles = ['Student', 'Company']
+const kindsOfProfiles = ['student', 'company']
 
 
 const userSchema = new Schema({
@@ -36,7 +36,6 @@ const userSchema = new Schema({
 	},
 	role: {
 		type: String,
-		// required: true,
 		enum: roles,
 		default: 'user'
 	},
@@ -79,8 +78,8 @@ userSchema.path('email').set(function (email) {
 	if (!this.name) {
 		this.name = email.replace(/^(.+)@.+$/, '$1')
 	}
-
-	return email
+	
+	return email.toLowerCase()
 })
 
 userSchema.pre('save', function (next) {
@@ -123,7 +122,7 @@ userSchema.methods = {
 		let fields = ['id', 'name', 'picture', 'address', 'kind']
 
 		if (full) {
-			fields = [...fields, 'email', 'createdAt', 'phone']
+			fields = [...fields, 'email', 'phone', 'createdAt']
 		}
 
 		

@@ -22,7 +22,7 @@
 		"apidoc": {
 				"name": "api-rest Job Board",
 				"version": "1.0.0",
-				"url": "https://job-board-itchii.herokuapp.com/api"
+				"url": "https://job-board-itchii.herokuapp.com"
 		},
 		"jest": {
 				"testEnvironment": "node",

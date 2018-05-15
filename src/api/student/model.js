@@ -1,5 +1,13 @@
 import mongoose, {Schema} from 'mongoose'
 const genres = ['hombre', 'mujer']
+const carreers = [
+	'Ingeniería en Informática',
+	'Ingeniería en Diseño Industrial',
+	'Ingeniería en Gestión Empresarial',
+	'Ingeniería en Industrial',
+	'Ingeniería en Sistemas Computacionales',
+	'Arquitectura',
+	'Licenciatura en administración'];
 
 const studentSchema = new Schema({
 	user: {
@@ -17,7 +25,8 @@ const studentSchema = new Schema({
 		degree: {
 			type: String,
 			trim: true,
-			required: true
+			required: true,
+			enum: carreers
 		},
 		date: {
 			type: String,
@@ -28,9 +37,7 @@ const studentSchema = new Schema({
 			trim: true,
 		}
 	},
-	skills: {
-		type: [String]
-	},
+	skills: [{type: String}],
 	achievements: [{
 		title: String,
 		description: String,
@@ -45,23 +52,24 @@ studentSchema.methods = {
 		
 		const view = {
 			id: this.id,
-			user: this.user.view(full),
 			genre: this.genre,
 			education: this.education,
 			skills: this.skills,
 			achievements: this.achievements,
-			createdAt: this.createdAt,
-			updatedAt: this.updatedAt
+			user: this.user.view(full),
 		}
 		
 		return full ? {
-			...view
+			...view,
+			createdAt: this.createdAt,
+			updatedAt: this.updatedAt
 		}: view
 	}
 }
 
 studentSchema.statics = {
-	genres
+	genres,
+	carreers
 }
 
 const model = mongoose.model('Student', studentSchema)

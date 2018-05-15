@@ -2,7 +2,7 @@ import _ from 'lodash'
 import { success, notFound } from '../../services/response/'
 import { User } from '.'
 
-export const index = ({ querymen: { query, select, cursor } }, res, next) =>
+export const getAll = ({ querymen: { query, select, cursor } }, res, next) =>
 	User.find(query, select, cursor)
 		.then((users) => users.map((user) => user.view()))
 		.then(success(res))
@@ -16,8 +16,13 @@ export const show = ({ params }, res, next) =>
 		.then(success(res))
 		.catch(next)
 
-export const showMe = ({ user }, res) =>
-	res.json(user.view(true))
+export const showMe = ({ user }, res, next) =>
+	User.findById(user.id)
+		.populate('profile')
+		.then(notFound(res))
+		.then((user) => user ? user.view(true) : null)
+		.then(success(res))
+		.catch(next)
 
 export const create = ({ bodymen: { body } }, res, next) => {
 	User.create(body)

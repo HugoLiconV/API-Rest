@@ -12,12 +12,13 @@ const companySchema = new Schema({
 	},
 	rfc: {
 		type: String,
+		// unique: false,
 		// required: true
 	},
 	razon: {
 		type: String,
 		// required: true,
-		// unique: true
+		// unique: false
 		//	TODO: verificar que la razon y el rfc sean unicos
 	},
 	description: {
@@ -45,12 +46,14 @@ companySchema.methods = {
 			// updatedAt: this.updatedAt
 		}
 
+		this.openings.map((opening, index) => this.openings[index] = opening.view(full))
+		
 		return full ? {
 			...view
 		} : view
 	}
 }
-
+//		.then((openings) => openings.map((opening) => opening.view()))
 const model = mongoose.model('Company', companySchema)
 
 export const schema = model.schema

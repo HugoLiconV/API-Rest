@@ -24,13 +24,18 @@ export const show = ({ params }, res, next) =>
     .catch(next)
 
 export const update = ({ user, bodymen: { body }, params }, res, next) => {
-	console.log(user)
-	console.log(body)
 	Student.findById(params.id)
 		.populate('user')
 		.then(notFound(res))
 		.then(authorOrAdmin(res, user, 'user'))
-		.then((student) => student ? _.merge(student, body).save() : null)
+		.then((student) => {
+			// console.log(student.skills)
+			// console.log(body.skills)
+			// let skills = [...student.skills, ...body.skills]
+			// console.log(skills)
+			student ? student.skills = body.skills : null
+			return student ? _.merge(student, body).save() : null
+		})
 		.then((student) => student ? student.view(true) : null)
 		.then(success(res))
 		.catch(next)

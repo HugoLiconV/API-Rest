@@ -2,7 +2,7 @@ import { Router } from 'express'
 import { middleware as query } from 'querymen'
 import { middleware as body } from 'bodymen'
 import { password as passwordAuth, master, token } from '../../services/passport'
-import { index, showMe, show, create, update, updatePassword, destroy } from './controller'
+import { getAll, showMe, show, create, update, updatePassword, destroy } from './controller'
 import { schema } from './model'
 export User, { schema } from './model'
 
@@ -22,7 +22,7 @@ const { email, password, name, picture, role, phone, address, kind } = schema.tr
 router.get('/',
 	token({ required: true, roles: ['admin'] }),
 	query(),
-	index)
+	getAll)
 
 /**
  * @api {get} /users/me Retrieve current user
@@ -57,7 +57,25 @@ router.get('/:id',
  * @apiParam {String{6..}} password User's password.
  * @apiParam {String} [name] User's name.
  * @apiParam {String} [picture] User's picture.
- * @apiParam {String=user,admin} [role=user] User's picture.
+ * @apiParam {String=user,admin} [role=user] User's role.
+ * @apiParam {String} phone User's phone
+ * @apiParam {Object} address User's address
+ * @apiParam {String} address.city User's city
+ * @apiParam {String} address.state User's state
+ * @apiParam {String=student,company} kind User's kind
+ * @apiParamExample {json} Request-Example:
+ * 	{
+ * 		"access_token": "{{master_token}}",
+ *		"email": "test@example.com",
+ *		"password": "123456",
+ *		"name": "Hugo",
+ *		"phone": "6141231231",
+ *		"address": {
+ *			"city": "Chihuahua",
+ *			"state": "Chihuahua"
+ *		},
+ *		"kind": "Company"
+ * 	}
  * @apiSuccess (Sucess 201) {Object} user User's data.
  * @apiError {Object} 400 Some parameters may contain invalid values.
  * @apiError 401 Master access only.
@@ -77,6 +95,21 @@ router.post('/',
  * @apiParam {String} access_token User access_token.
  * @apiParam {String} [name] User's name.
  * @apiParam {String} [picture] User's picture.
+ * @apiParam {String} phone User's phone
+ * @apiParam {Object} address User's address
+ * @apiParam {String} address.city User's city
+ * @apiParam {String} address.state User's state
+ * @apiParamExample {json} Request-Example:
+ * 	{
+ * 		"access_token": "{{master_token}}",
+ *		"name": "Hugo",
+ *		"phone": "6141231231",
+ *		"address": {
+ *			"city": "Chihuahua",
+ *			"state": "Chihuahua"
+ *		},
+ *		"picture": "www.urltopicture.com/picture.png"
+ * 	}
  * @apiSuccess {Object} user User's data.
  * @apiError {Object} 400 Some parameters may contain invalid values.
  * @apiError 401 Current user or admin access only.
@@ -84,7 +117,7 @@ router.post('/',
  */
 router.put('/:id',
 	token({ required: true }),
-	body({ email, password, name, picture, role, phone, address, kind }),
+	body({ name, picture, phone, address }),
 	update)
 
 /**

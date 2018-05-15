@@ -2,7 +2,7 @@ import { Router } from 'express'
 import { middleware as query } from 'querymen'
 import { middleware as body } from 'bodymen'
 import { token } from '../../services/passport'
-import { create, index, show, update, destroy } from './controller'
+import { create, index, show, update, destroy, myOpenigns } from './controller'
 import { schema } from './model'
 export Opening, { schema } from './model'
 
@@ -15,12 +15,26 @@ const { title, location, salary, date, description, carreer } = schema.tree
  * @apiGroup Opening
  * @apiPermission user
  * @apiParam {String} access_token user access token.
- * @apiParam title Opening's title.
- * @apiParam location Opening's location.
- * @apiParam salary Opening's salary.
- * @apiParam date Opening's date.
- * @apiParam description Opening's description.
- * @apiParam carreer Opening's carreer.
+ * @apiParam {String} title Opening title.
+ * @apiParam {Object} [location] Opening location.
+ * @apiParam {String} location.city Opening city
+ * @apiParam {String} location.state Opening state
+ * @apiParam {String} [salary] Opening salary.
+ * @apiParam {Date} [date] Opening date.
+ * @apiParam {String} description Opening description.
+ * @apiParam {[String]="Ingeniería en Informática","Ingeniería en Diseño Industrial","Ingeniería en Gestión Empresarial","Ingeniería en Industrial","Ingeniería en Sistemas Computacionales","Arquitectura","Licenciatura en administración"} carreer Carreers required for the opening.
+ * @apiParamExample {json} Request-Example:
+ * { 
+ *  "access_token": "{{master_token}}",
+ *  "title": "Programador web", 
+ *	"location": {
+ *	 "city": "Chihuahua",
+ *	 "state": "Chihuahua"
+ * }, 
+ *  "salary": "13000", 
+ *  "description": "Algo de gestion", 
+ *  "carreer": ["Ingeniería en Gestión Empresarial"]
+ * }
  * @apiSuccess {Object} opening Opening's data.
  * @apiError {Object} 400 Some parameters may contain invalid values.
  * @apiError 404 Opening not found.
@@ -35,27 +49,34 @@ router.post('/',
  * @api {get} /openings Retrieve openings
  * @apiName RetrieveOpenings
  * @apiGroup Opening
- * @apiPermission user
- * @apiParam {String} access_token user access token.
  * @apiUse listParams
  * @apiSuccess {Object[]} openings List of openings.
  * @apiError {Object} 400 Some parameters may contain invalid values.
- * @apiError 401 user access only.
  */
 router.get('/',
   query(),
   index)
 
+
+/**
+ * @api {get} /openings/my-openings Retrieve company's openings
+ * @apiName RetrieveCompanysOpenings
+ * @apiGroup Opening
+ * @apiPermission user
+ * @apiParam {String} access_token User access_token.
+ * @apiSuccess {Object[]} openings List of openings.
+ */
+router.get('/my-openings',
+	token({ required: true }),
+	myOpenigns)
+
 /**
  * @api {get} /openings/:id Retrieve opening
  * @apiName RetrieveOpening
  * @apiGroup Opening
- * @apiPermission user
- * @apiParam {String} access_token user access token.
  * @apiSuccess {Object} opening Opening's data.
  * @apiError {Object} 400 Some parameters may contain invalid values.
  * @apiError 404 Opening not found.
- * @apiError 401 user access only.
  */
 router.get('/:id',
   token({ required: true }),

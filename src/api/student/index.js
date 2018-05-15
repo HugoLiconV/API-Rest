@@ -11,23 +11,6 @@ const router = new Router()
 const { genre, education, skills, achievements } = schema.tree
 
 /**
- * @api {post} /students Create student
- * @apiName CreateStudent
- * @apiGroup Student
- * @apiPermission user
- * @apiParam {String} access_token user access token.
- * @apiParam genre Student's genre.
- * @apiSuccess {Object} student Student's data.
- * @apiError {Object} 400 Some parameters may contain invalid values.
- * @apiError 404 Student not found.
- * @apiError 401 user access only.
- */
-router.post('/', 
-	token({ required: true }),
-	body({genre, education, skills, achievements: [Object] }),
-	create)
-
-/**
  * @api {get} /students Retrieve students
  * @apiName RetrieveStudents
  * @apiGroup Student
@@ -64,7 +47,37 @@ router.get('/:id',
  * @apiGroup Student
  * @apiPermission user
  * @apiParam {String} access_token user access token.
- * @apiParam genre Student's genre.
+ * @apiParam {String=hombre,mujer} [genre] User's role.
+ * @apiParam {Object} [education] User's education.
+ * @apiParam {String="Ingeniería en Informática","Ingeniería en Diseño Industrial","Ingeniería en Gestión Empresarial","Ingeniería en Industrial","Ingeniería en Sistemas Computacionales","Arquitectura","Licenciatura en administración"} education.degree User's degree.
+ * @apiParam {String} [education.date] Date of admision - date of egress
+ * @apiParam {String} [education.grade] User's grade
+ * @apiParam {String[]} skills User's skills
+ * @apiParam {Object[]} achievements User's achievements
+ * @apiParam {String} achievements.title Achievement title.
+ * @apiParam {String} achievements.description Achievement description
+ * @apiParam {String} achievements.date Achievement date
+ * @apiParamExample {json} Request-Example:
+ * {		
+ * 	"access_token": "{{master_token}}",
+ * 	"genre": "hombre",	
+ *	"education": {
+ *		"degree": "Ingeniería en Sistemas Computacionales",
+ *		"date": "2014 - 2018",
+ *		"grade": "8.0"
+ *	},	
+ *	"skills": ["MySQL", "JAVA", "C++"],
+ *	"achievements": [{
+ *		"title": "SOFE",
+ *		"description": "lorem lorem",
+ *		"date": "Octubre 2017"
+ *	},
+ *	{
+ *		"title": "Otro SOFE",
+ *		"description": "lorem lorem",
+ *		"date": "Octubre 2018"
+ *	}],
+ * }
  * @apiSuccess {Object} student Student's data.
  * @apiError {Object} 400 Some parameters may contain invalid values.
  * @apiError 404 Student not found.
@@ -75,18 +88,18 @@ router.put('/:id',
   body({genre, education, skills, achievements: [Object] }),
   update)
 
-/**
+/*
  * @api {delete} /students/:id Delete student
  * @apiName DeleteStudent
  * @apiGroup Student
- * @apiPermission user
+ * @apiPermission admin
  * @apiParam {String} access_token user access token.
  * @apiSuccess (Success 204) 204 No Content.
  * @apiError 404 Student not found.
- * @apiError 401 user access only.
+ * @apiError 401 admin access only.
  */
-router.delete('/:id',
-  token({ required: true }),
-  destroy)
+// router.delete('/:id',
+//   token({ required: true, roles: ['admin'] }),
+//   destroy)
 
 export default router

@@ -1,12 +1,13 @@
 import mongoose, { Schema } from 'mongoose'
+import mongooseKeywords from "mongoose-keywords";
 
 const carreers = [
 	'Ingeniería en Informática', 
 	'Ingeniería en Diseño Industrial', 
 	'Ingeniería en Gestión Empresarial', 
-	'Ingeniería en Industrial', 
+	'Ingeniería Industrial', 
 	'Ingeniería en Sistemas Computacionales',
-	'Arquitectrua',
+	'Arquitectura',
 	'Licenciatura en administración'];
 
 const openingSchema = new Schema({
@@ -77,6 +78,9 @@ openingSchema.methods = {
     } : view
   }
 }
+
+openingSchema.plugin(mongooseKeywords, {paths: ['location', 'carreer', 'title']})
+
 
 const model = mongoose.model('Opening', openingSchema)
 

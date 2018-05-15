@@ -17,7 +17,7 @@ export const notFound = (res) => (entity) => {
 export const authorOrAdmin = (res, user, userField) => (entity) => {
 	if (entity) {
 		const isAdmin = user.role === 'admin'
-		const isAuthor = entity[userField] && entity[userField].equals(user.id)
+		const isAuthor = entity[userField] && (entity[userField].equals(user.id) || entity[userField].equals(user.profile))
 		if (isAuthor || isAdmin) {
 			return entity
 		}
