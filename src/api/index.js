@@ -31,12 +31,12 @@ const router = new Router();
  * @apiParam {String[]} [sort=-createdAt] Order of returned items.
  * @apiParam {String[]} [fields] Fields to be returned.
  */
-router.use('/students', student)
 router.use('/users', user)
+router.use('/students', student)
+router.use('/companies', company)
 router.use('/auth', auth)
 router.use('/articles', article)
 router.use('/openings', opening)
-router.use('/companies', company)
 
 
 export default router;

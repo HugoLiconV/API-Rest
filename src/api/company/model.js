@@ -46,7 +46,7 @@ companySchema.methods = {
 			// updatedAt: this.updatedAt
 		}
 
-		this.openings.map((opening, index) => this.openings[index] = opening.view(full))
+		// this.openings.map((opening, index) => this.openings[index] = opening.view(full))
 		
 		return full ? {
 			...view

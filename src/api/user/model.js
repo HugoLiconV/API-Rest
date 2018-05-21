@@ -97,7 +97,7 @@ userSchema.pre('save', function (next) {
 		Company.create({user: this.id}, function (err, company) {
 			console.log('Creando perfil de empresa')
 			if (err) return console.log('err: '+err);
-			
+
 			that.profile = company.id;
 			console.log(`${that.profile} == ${company.id}`)
 		})
