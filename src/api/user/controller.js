@@ -58,7 +58,10 @@ export const update = ({ bodymen: { body }, params, user }, res, next) =>
 			}
 			return result
 		})
-		.then((user) => user ? _.merge(user, body).save() : null)
+		.then((user) => {
+			user.address = body.address
+			return user ? _.merge(user, body).save() : null
+		})
 		.then((user) => user ? user.view(true) : null)
 		.then(success(res))
 		.catch(next)

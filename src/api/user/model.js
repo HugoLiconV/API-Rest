@@ -7,7 +7,7 @@ import Student from '../../api/student/model'
 import Company from '../../api/company/model'
 
 const roles = ['user', 'admin']
-const kindsOfProfiles = ['student', 'company']
+const kindsOfProfiles = ['Student', 'Company']
 
 
 const userSchema = new Schema({
