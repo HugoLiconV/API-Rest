@@ -38,5 +38,4 @@ router.use('/auth', auth)
 router.use('/articles', article)
 router.use('/openings', opening)
 
-
 export default router;

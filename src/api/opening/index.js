@@ -79,7 +79,6 @@ router.get('/my-openings',
  * @apiError 404 Opening not found.
  */
 router.get('/:id',
-  token({ required: true }),
   show)
 
 /**

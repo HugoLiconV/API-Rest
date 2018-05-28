@@ -2,7 +2,6 @@ import _ from 'lodash'
 import {success, notFound, authorOrAdmin} from '../../services/response/'
 import {Opening} from '.'
 import {Company} from '../company'
-import {User} from "../user";
 
 export const create = ({user, bodymen: {body}}, res, next) => {
 	console.log(`Profile id ${user.profile}`)
@@ -32,8 +31,11 @@ export const create = ({user, bodymen: {body}}, res, next) => {
 }
 
 export const index = ({querymen: {query, select, cursor}}, res, next) => {
-	console.log(query)
+	console.log(`query:`);
+	console.log(query);
+	console.log('select: ')
 	console.log(select)
+	console.log('cursor')
 	console.log(cursor)
 	Opening.find(query, select, cursor)
 		.populate('company')
@@ -71,7 +73,7 @@ export const destroy = ({user, params}, res, next) =>
 		.then(success(res, 204))
 		.catch(next)
 
-export const myOpenigns = ({ user }, res, next) => {
+export const myOpenigns = ({user}, res, next) => {
 	console.log(user.profile)
 	Opening.find({company: user.profile})
 		.then(notFound(res))
