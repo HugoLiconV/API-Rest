@@ -48,7 +48,12 @@ companySchema.methods = {
 
 		view.openings.map((opening, index) => {
 			view.openings[index] = opening.view(full)
-		});		
+			if (typeof opening.view === "function") {
+				view.openings[index] = opening.view(full)
+				// view.favorites[index] = opening.view(full)
+			}
+		});
+		
 		return full ? {
 			...view
 		} : view

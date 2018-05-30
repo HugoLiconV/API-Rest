@@ -68,7 +68,6 @@ studentSchema.methods = {
 			if (typeof favorite.view === "function") {
 				view.favorites[index] = favorite.view(full)
 			}
-			
 		});
 		return full ? {
 			...view,
