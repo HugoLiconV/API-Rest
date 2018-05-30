@@ -35,9 +35,11 @@ export const update = ({user, bodymen: {body}, params}, res, next) => {
 			if (student){
 				student.skills = body.skills
 				// body.favorites.map(fav => console.log(fav));
-				// student.favorites = manageFavorites(student.favorites, body.favorites);;
-				// student.favorites.map(fav => console.log(fav))
-				student.favorites = body.favorites
+				student.favorites.map(fav => console.log(fav))
+				student.favorites = manageFavorites(student.favorites, body.favorites);
+				body.favorites = [];
+				student.favorites.map(fav => console.log(fav))
+				// student.favorites = body.favorites
 				student.achievements = body.achievements
 			}
 			return student ? _.merge(student, body).save() : null
@@ -57,6 +59,8 @@ export const destroy = ({user, params}, res, next) =>
 
 export const manageFavorites = (currentFavorites, newFavorites) => {
 	var mongoose = require('mongoose');
+	if (!newFavorites) return [];
+	
 	currentFavorites.map((fav, index) => currentFavorites[index] = fav.toString());
 	currentFavorites.map(fav => console.log(fav.toString() + "type " + typeof fav))
 	// newFavorites.map((fav, index) => newFavorites[index] = mongoose.Types.ObjectId(fav));
