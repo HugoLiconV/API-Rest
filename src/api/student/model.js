@@ -63,12 +63,14 @@ studentSchema.methods = {
 			favorites: this.favorites
 		}
 
-		view.favorites.map((favorite, index) => {
-			// console.log(favorite)
-			if (typeof favorite.view === "function") {
-				view.favorites[index] = favorite.view(full)
-			}
-		});
+		if (view.favorites){
+			view.favorites.map((favorite, index) => {
+				// console.log(favorite)
+				if (typeof favorite.view === "function") {
+					view.favorites[index] = favorite.view(full)
+				}
+			});	
+		}
 		return full ? {
 			...view,
 			createdAt: this.createdAt,
