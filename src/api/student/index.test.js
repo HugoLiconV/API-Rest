@@ -3,6 +3,7 @@ import { signSync } from '../../services/jwt'
 import express from '../../services/express'
 import { User } from '../user'
 import routes, { Student } from '.'
+import manageFavorites from './controller'
 
 const app = () => express(routes)
 
@@ -17,6 +18,13 @@ beforeEach(async () => {
   adminSession = signSync(admin.id)
   student = await Student.create({ user })
 })
+
+test('Should add id to array', () => {
+	const currentFavorites = [];
+	const newFavorites = ['123'];
+	const result = manageFavorites(currentFavorites, newFavorites);
+	expect(result).toEqual('array');
+});
 
 test('POST /students 201 (user)', async () => {
   const { status, body } = await request(app())

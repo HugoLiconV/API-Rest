@@ -72,7 +72,6 @@ openingSchema.methods = {
       // updatedAt: this.updatedAt
     }
 
-    console.log(view)
     return full ? {
       ...view
       // add properties for a full view

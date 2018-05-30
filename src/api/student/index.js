@@ -8,7 +8,7 @@ export Student, { schema } from './model'
 
 const router = new Router()
 // eslint-disable-next-line no-unused-vars
-const { genre, education, skills, achievements } = schema.tree
+const { genre, education, skills, achievements, favorites } = schema.tree
 
 /**
  * @api {get} /students Retrieve students
@@ -85,7 +85,7 @@ router.get('/:id',
  */
 router.put('/:id',
   token({ required: true }),
-  body({genre, education, skills, achievements: [Object] }),
+  body({genre, education, skills, achievements: [Object], favorites }),
   update)
 
 /*

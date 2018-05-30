@@ -19,6 +19,9 @@ const studentSchema = new Schema({
 		type: String,
 		lowercase: true,
 		enum: genres,
+	},	
+	favorites: {
+		type: [{type: Schema.ObjectId, ref: 'Opening'}]
 	},
 	education: {
 		type: Object,
@@ -49,7 +52,7 @@ const studentSchema = new Schema({
 
 studentSchema.methods = {
 	view(full) {
-		
+		//
 		const view = {
 			id: this.id,
 			genre: this.genre,
@@ -57,8 +60,16 @@ studentSchema.methods = {
 			skills: this.skills,
 			achievements: this.achievements,
 			user: this.user.view(full),
+			favorites: this.favorites
 		}
-		
+
+		view.favorites.map((favorite, index) => {
+			// console.log(favorite)
+			if (typeof favorite.view === "function") {
+				view.favorites[index] = favorite.view(full)
+			}
+			
+		});
 		return full ? {
 			...view,
 			createdAt: this.createdAt,
