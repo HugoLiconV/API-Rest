@@ -59,7 +59,7 @@ export const destroy = ({user, params}, res, next) =>
 
 export const manageFavorites = (currentFavorites, newFavorites) => {
 	var mongoose = require('mongoose');
-	if (!newFavorites) return [];
+	if (!newFavorites) return currentFavorites;
 	
 	currentFavorites.map((fav, index) => currentFavorites[index] = fav.toString());
 	currentFavorites.map(fav => console.log(fav.toString() + "type " + typeof fav))
