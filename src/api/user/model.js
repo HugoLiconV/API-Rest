@@ -78,30 +78,32 @@ userSchema.path('email').set(function (email) {
 	if (!this.name) {
 		this.name = email.replace(/^(.+)@.+$/, '$1')
 	}
-	
+
 	return email.toLowerCase()
 })
 
 userSchema.pre('save', function (next) {
 	let that = this;
-	this.id = new mongoose.Types.ObjectId()
 
+	if (!this.profile) { //si no tiene perfil significa que es nuevo usuario de lo contrario solo esta editando información
+		this.id = new mongoose.Types.ObjectId()
+		if (this.kind === kindsOfProfiles[0]) { //estudiante
+			Student.create({user: this.id}, function (err, student) {
+				if (err) return err;
+				that.profile = student.id;
+			})
+		} else { //empresa
+			console.log('empresa')
+			Company.create({user: this.id}, function (err, company) {
+				console.log('Creando perfil de empresa')
+				if (err) return console.log('err: ' + err);
 
-	if (this.kind === kindsOfProfiles[0]) { //estudiante
-		Student.create({user: this.id}, function (err, student) {
-			if (err) return err;
-			that.profile = student.id;
-		})
-	} else { //empresa
-		console.log('empresa')
-		Company.create({user: this.id}, function (err, company) {
-			console.log('Creando perfil de empresa')
-			if (err) return console.log('err: '+err);
-
-			that.profile = company.id;
-			console.log(`${that.profile} == ${company.id}`)
-		})
+				that.profile = company.id;
+				console.log(`${that.profile} == ${company.id}`)
+			})
+		}
 	}
+
 
 	if (!this.isModified('password')) return next()
 
@@ -125,13 +127,13 @@ userSchema.methods = {
 			fields = [...fields, 'email', 'phone', 'createdAt']
 		}
 
-		
+
 		fields.forEach((field) => {
 			view[field] = this[field]
 		})
-		
+
 		view.profile = this.profile.view(full);
-		
+
 		return view
 	},
 
